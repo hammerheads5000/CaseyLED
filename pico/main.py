@@ -4,8 +4,11 @@ from machine import Pin, UART
 import neopixel
 import rusb
 from _thread import start_new_thread
+import json
 
 UPDATE_FREQUENCY = 50 # hz
+
+JSON_CONFIG = 'config.json'
 
 STRIPS = {
     'Left': {
@@ -26,30 +29,48 @@ STRIPS = {
     },
 }
 
-# LED Strip IDs
-LEFT_ID = 0b000
-RIGHT_ID = 0b001
-SHELF_ID = 0b010
-WORKBENCH_ID = 0b011
+# Config codes
+CONFIG_STRIP_CODE = 0b1111 # 1 bit for reversed,
+                           # 5 bits for GPIO pin,
+                           # 2 bits + 1 byte for LED #
+DELETE_STRIP_CODE = 0b1110
+UPDATE_FREQ_CODE = 0b1101 # 1 byte for update frequency in hz
 
 # Destructive Control codes
-OFF_CODE = 0b00000
-SOLID_CODE = 0b00001 # 3 bytes of color
-RAINBOW_CODE = 0b00010 # 1 byte for speed
-GRADIENT_CODE = 0b00011 # 3 bytes for color 1, 3 bytes for color 2
+OFF_CODE = 0b0000
+SOLID_CODE = 0b0001 # 3 bytes of color
+RAINBOW_CODE = 0b0010 # 1 byte for speed
+GRADIENT_CODE = 0b0011 # 3 bytes for color 1, 3 bytes for color 2
+MOVING_PULSES_CODE = 0b0100 # 4 bits for # pulses, 4 bits for decay, 1 speed byte, 3 for color
+SET_PIXEL_CODE = 0b0101 # 1 byte for idx, 3 bytes for color
+SET_RANGE_CODE = 0b0110 # 2 bytes for start + end idx, 3 bytes for color
 
 # Non-Destructive Control Codes
-BRIGHTNESS_CODE = 0b10000 # 1 byte for brightness level
-BREATHING_CODE = 0b10001 # 1 byte
+BRIGHTNESS_CODE = 0b1000 # 1 byte for brightness level
+BREATHING_CODE = 0b1001 # 1 byte 
 
 DATA_LENGTH = {
+    CONFIG_STRIP_CODE: 2,
+    DELETE_STRIP_CODE: 0,
+    UPDATE_FREQ_CODE: 1,
     OFF_CODE: 0,
     SOLID_CODE: 3,
     RAINBOW_CODE: 1,
     GRADIENT_CODE: 6,
+    MOVING_PULSES_CODE: 5,
+    SET_PIXEL_CODE: 4,
+    SET_RANGE_CODE: 5,
     BRIGHTNESS_CODE: 1,
     BREATHING_CODE: 1,
 }
+
+def updateJSON(strips):
+    with open(JSON_CONFIG, 'w') as f:
+        f.write(json.dumps(strips, indent=4))
+        
+def getJSON():
+    with open(JSON_CONFIG) as f:
+        return json.load(f)
 
 
 def apply_control(strips, patterns, strip_id, control_code, data):
@@ -104,8 +125,8 @@ def read_data(buffer0, timeout_ms = 100):
     data_len = 24 # arbitrary large-ish number
     if len(buffer0)> 0:
         control_code = int(buffer0[0])
-        strip_id = control_code >> 5
-        control_code &= 0b00011111
+        strip_id = control_code >> 4
+        control_code &= 0b00001111
         data = buffer0[1:]
         data_len = DATA_LENGTH[control_code]
     while time.ticks_diff(time.ticks_ms(), last_input_time) < timeout_ms and len(data) < data_len:
@@ -116,8 +137,8 @@ def read_data(buffer0, timeout_ms = 100):
         last_input_time = time.ticks_ms()
         if control_code is None:
             control_code = int(buffer[0])
-            strip_id = control_code >> 5
-            control_code &= 0b00011111
+            strip_id = control_code >> 4
+            control_code &= 0b0001111
             data_len = DATA_LENGTH[control_code]
             continue
 
