@@ -10,7 +10,8 @@ def hex_color_to_list(hex):
     byte = int(hex[1:], 16)
     return [byte >> 16, (byte >> 8) & 0xFF, byte & 0xFF]
 
-def save_config(config):
+def save_config():
+    global config
     with open('config.json', 'w') as f:
         json.dump(config, f, indent=4)
         
@@ -18,7 +19,10 @@ def get_config():
     with open('config.json') as f:
         return json.load(f)
 
+config = get_config()
+
 def add_strip(strip_id, pin, name, length):
+    global config
     config = get_config()
     if str(strip_id) in config.keys():
         config[str(strip_id)]['Name'] = name
@@ -40,6 +44,7 @@ def config_section():
     ui.button('Add strip', on_click=lambda: add_strip(int(id_input.value), int(pin_input.value), name_input.value, int(length_input.value)))
 
 def strip_section(strip_id):
+    global config
     def change_pattern(pattern):
         match pattern:
             case ser.OFF_CODE:
@@ -67,13 +72,12 @@ def strip_section(strip_id):
                 ser.send_control_code(strip_id, ser.RAINBOW_CODE)
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
             case ser.SOLID_CODE:
-                print(color)
                 ser.send_control_code(strip_id, ser.SOLID_CODE, hex_color_to_list(color.value))
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
             case ser.GRADIENT_CODE:
                 ser.send_control_code(strip_id, ser.GRADIENT_CODE, hex_color_to_list(startcolor.value) + hex_color_to_list(endcolor.value))
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
-        ui.notify(f'{ID_DICT[strip_id]} Strip updated')
+        ui.notify(f'{config[str(strip_id)]} Strip updated')
     
     def show_brightness(should_show):
         brightness_label.set_visibility(should_show)
@@ -89,7 +93,7 @@ def strip_section(strip_id):
         endcolor_label.set_visibility(should_show)
         endcolor.set_visibility(should_show)
 
-    ui.label(f'{ID_DICT[strip_id]} Strip')
+    ui.label(f'{config[str(strip_id)]} Strip')
     pattern_toggle = ui.toggle(PATTERN_DICT, on_change=lambda event: change_pattern(event.value), value=ser.RAINBOW_CODE)
     
     brightness_label = ui.label('Brightness:')
