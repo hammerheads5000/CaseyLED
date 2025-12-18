@@ -32,7 +32,7 @@ BREATHING_CODE = 0b1001 # 1 byte
 
 def send_control_code(id, code, data: (list[int] | int) = []):
     if isinstance(data, list):
-        _serial_port.write([0xFF, id << 5 | code] + data)
+        _serial_port.write([0xFF, id << 4 | code] + data)
     else:
-        _serial_port.write([0xFF, id << 5 | code, data])
+        _serial_port.write([0xFF, id << 4 | code, data])
     

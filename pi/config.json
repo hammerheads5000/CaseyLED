@@ -1,0 +1,27 @@
+{
+    "0": {
+        "Name": "Left",
+        "Pin": 10,
+        "Length": 106
+    },
+    "1": {
+        "Name": "Right",
+        "Pin": 4,
+        "Length": 105
+    },
+    "2": {
+        "Name": "Workbench",
+        "Pin": 6,
+        "Length": 140
+    },
+    "3": {
+        "Name": "Workbench",
+        "Pin": 8,
+        "Length": 140
+    },
+    "4": {
+        "Name": "Workbench Center",
+        "Pin": 12,
+        "Length": 140
+    }
+}
