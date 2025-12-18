@@ -72,6 +72,12 @@ class Pattern:
         buffer_view = [hslToRgb(h, 1, 0.5) for h in hues]
         return Pattern(start, buffer_view)
     
+    @staticmethod
+    def wave(color, length: int, start: int = 0):
+        for i in range(length):
+            val = .5*math.sin((2*math.pi*i)/50)+.5
+            buffer_view[i] = (color[0]*val, color[1]*val, color[2]*val)
+    
     def offest(self, offset: int):
         offset = (offset + len(self.buffer_view)) % len(self.buffer_view)
         self.buffer_view = self.buffer_view[offset:] + self.buffer_view[:offset]
@@ -112,6 +118,24 @@ class MovingPattern(AnimatedPattern):
     def update(self):
         self.offest(self.speed)
         
+class WavePattern(AnimatedPattern):
+    def __init__(self, color, length, speed: int):
+        pattern = Pattern.wave(color, length)
+        super().__init__(pattern)
+        self.speed = speed
+        self.storeOffset = 0
+        self.buffer_view = 0
+        self.length = length
+        
+    def set_speed(speed: int):
+        self.speed = speed
+        
+    def update(self):
+        storeOffset += self.speed
+        for i in range(self.length):
+            val = .5*math.sin(((2*math.pi*i)/50)+storeOffset)+.5
+            self.buffer_view[i] = (self.color[0]*val, self.color[1]*val, self.color[2]*val)
+
 class BreathingPattern(AnimatedPattern):
     def __init__(self, pattern: Pattern, period: int):
         super().__init__(pattern)
