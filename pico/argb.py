@@ -106,7 +106,7 @@ class MovingPattern(AnimatedPattern):
         super().__init__(pattern)
         self.speed = speed
         
-    def set_speed(speed: int):
+    def set_speed(self, speed: int):
         self.speed = speed
         
     def update(self):

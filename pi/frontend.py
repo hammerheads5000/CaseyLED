@@ -63,7 +63,22 @@ def config_popup(strip_id=-1) -> ui.dialog:
         ui.button('Configure strip', on_click=lambda: _config(strip_id, int(pin_input.value), name_input.value, int(length_input.value), reversed_input.value))
     return dialog
 
-def strip_section(strip_id: int):
+def strip_card(strip_id, strip_buttons: list[ui.button]) -> ui.card:
+    current_pattern_display = None
+    with ui.button(on_click=lambda e: select_strip(e.sender, strip_buttons)).classes('w-full !bg-gray-900') as button:
+        ui.label(f"{config[str(strip_id)]['Name']} Strip").classes('text-lg font-bold')
+        current_pattern_display = ui.card().classes('no-shadow border border-gray-700 bg-none grow h-3 p-0')
+        strip_buttons.append(button)
+    
+    return current_pattern_display
+
+def select_strip(sender: ui.element, strip_buttons: list[ui.button]):
+    for button in strip_buttons:
+        button.classes(remove='!bg-gray-900', add='!bg-neutral-900')
+        
+    sender.classes(remove='!bg-neutral-900', add='!bg-gray-900')
+
+def strip_panel(strip_id: int):
     global config
     current_pattern_classes = 'border border-gray-700 bg-none'
 
@@ -160,10 +175,19 @@ def root() -> None:
     with ui.row():
         ui.button('Add Strip +', on_click=config_popup)
         ui.button(icon='refresh', on_click=update_config).tooltip('Refresh Configuration from config.json')
+    strip_buttons = []
+    current_pattern_displays = []
     for strip_id in config.keys():
-        strip_section(int(strip_id))
+        current_pattern_displays.append(strip_card(strip_id, strip_buttons))
+        strip_panel(int(strip_id))
     
 def main():
+    with ui.button_group().classes('column'):
+        with ui.button():
+            ui.checkbox()
+        ui.button('no')
+        ui.button('why')
+        ui.button('why')
     root()
     ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(600, 800))
 
