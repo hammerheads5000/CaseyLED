@@ -40,6 +40,96 @@ def config_strip(strip_id: int, pin: int, name: str, length: int, reversed: bool
     save_config()
     root.refresh()
     
+class StripPanel:
+    def __init__(self, strip_id: int, pattern_displays: list[ui.card]):
+        global config
+        self.name = config[str(strip_id)]['Name']
+        self.current_pattern_classes = 'border border-gray-700 bg-none'
+        self.strip_id = strip_id
+        self.pattern_display = pattern_displays[strip_id]
+
+        with ui.card().classes('w-full') as card:
+            self.card = card
+            self.config_dialog = config_popup(strip_id)
+
+            with ui.row().classes('items-center w-full'):
+                ui.label(f"{self.name} Strip").classes('text-lg font-bold grow')
+                ui.button(icon='settings', on_click=lambda: self.config_dialog.open()).tooltip('Configure Strip').classes('justify-self-end')
+                
+            self.pattern_toggle = ui.toggle(PATTERN_DICT, on_change=self.update_pattern_ui, value=ser.OFF_CODE)
+            
+            self.brightness_label = ui.label('Brightness:')
+            self.brightness = ui.slider(min=0, max=255, step = 1, value = 255)
+            
+            self.color_label = ui.label('Color:')
+            self.color = ui.color_input(value="#DDAA88", preview=True)
+
+            self.startcolor_label = ui.label('Start Color:')
+            self.startcolor = ui.color_input(value="#FFFFFF", preview=True)
+            
+            self.endcolor_label = ui.label('End Color:')
+            self.endcolor = ui.color_input(value="#0009B8", preview=True)
+            
+            ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')      
+            
+    def update_pattern_ui(self):
+        match self.pattern_toggle.value:
+            case ser.OFF_CODE:
+                self.show_brightness(False)
+                self.show_color(False)
+                self.show_gradient(False)
+            case ser.RAINBOW_CODE:
+                self.show_brightness(True)
+                self.show_color(False)
+                self.show_gradient(False)
+            case ser.SOLID_CODE:
+                self.show_brightness(True)
+                self.show_color(True)
+                self.show_gradient(False)
+            case ser.GRADIENT_CODE:
+                self.show_brightness(True)
+                self.show_color(False)
+                self.show_gradient(True)
+                
+    def update(self):
+        match self.pattern_toggle.value:
+            case ser.OFF_CODE:
+                ser.send_control_code(self.strip_id, ser.OFF_CODE)
+                self.pattern_display.classes(remove=self.current_pattern_classes, add='border border-gray-700 !bg-none')
+                self.current_pattern_classes = 'border border-gray-700 !bg-none'
+            case ser.RAINBOW_CODE:
+                ser.send_control_code(self.strip_id, ser.RAINBOW_CODE)
+                ser.send_control_code(self.strip_id, ser.BRIGHTNESS_CODE, self.brightness.value)
+                self.pattern_display.classes(remove=self.current_pattern_classes, add='border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700')
+                self.current_pattern_classes = 'border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700'
+            case ser.SOLID_CODE:
+                ser.send_control_code(self.strip_id, ser.SOLID_CODE, hex_color_to_list(self.color.value))
+                ser.send_control_code(self.strip_id, ser.BRIGHTNESS_CODE, self.brightness.value)
+                self.pattern_display.classes(remove=self.current_pattern_classes, add=f'border-none !bg-[{self.color.value}]')
+                self.current_pattern_classes = f'border-none !bg-[{self.color.value}]'
+            case ser.GRADIENT_CODE:
+                ser.send_control_code(self.strip_id, ser.GRADIENT_CODE, hex_color_to_list(self.startcolor.value) + hex_color_to_list(self.endcolor.value))
+                ser.send_control_code(self.strip_id, ser.BRIGHTNESS_CODE, self.brightness.value)
+                self.pattern_display.classes(remove=self.current_pattern_classes, add=f'border-none !bg-linear-to-r from-[{self.startcolor.value}] to-[{self.endcolor.value}]')
+                self.current_pattern_classes = f'border-none !bg-linear-to-r from-[{self.startcolor.value}] to-[{self.endcolor.value}]'
+
+    def show_brightness(self, should_show: bool):
+        self.brightness_label.set_visibility(should_show)
+        self.brightness.set_visibility(should_show)
+            
+    def show_color(self, should_show: bool):
+        self.color_label.set_visibility(should_show)
+        self.color.set_visibility(should_show)
+        
+    def show_gradient(self, should_show: bool):
+        self.startcolor_label.set_visibility(should_show)
+        self.startcolor.set_visibility(should_show)
+        self.endcolor_label.set_visibility(should_show)
+        self.endcolor.set_visibility(should_show)
+
+    def set_visibility(self, should_show: bool):
+        self.card.set_visibility(should_show)
+        self.update_pattern_ui()
 
 def config_popup(strip_id=-1) -> ui.dialog:
     def _config(strip_id: int, pin: int, name: str, length: int, reversed: bool):
@@ -63,111 +153,50 @@ def config_popup(strip_id=-1) -> ui.dialog:
         ui.button('Configure strip', on_click=lambda: _config(strip_id, int(pin_input.value), name_input.value, int(length_input.value), reversed_input.value))
     return dialog
 
-def strip_section(strip_id: int):
-    global config
-    current_pattern_classes = 'border border-gray-700 bg-none'
-
-    def change_pattern(pattern):
-        match pattern:
-            case ser.OFF_CODE:
-                show_brightness(False)
-                show_color(False)
-                show_gradient(False)
-            case ser.RAINBOW_CODE:
-                show_brightness(True)
-                show_color(False)
-                show_gradient(False)
-            case ser.SOLID_CODE:
-                show_brightness(True)
-                show_color(True)
-                show_gradient(False)
-            case ser.GRADIENT_CODE:
-                show_brightness(True)
-                show_color(False)
-                show_gradient(True)
+def strip_selection_card(strip_id, strip_buttons: list[ui.button], strip_panels: list[StripPanel]) -> ui.card:
+    current_pattern_display = None
+    with ui.button(on_click=lambda e: select_strip(strip_id, strip_buttons, strip_panels)).classes('w-full !bg-neutral-900 justify-start') as button:
+        ui.label(f"{config[str(strip_id)]['Name']} Strip").classes('text-lg')
+        current_pattern_display = ui.card().classes('no-shadow border border-gray-700 bg-none grow h-3 p-0 w-full')
+        strip_buttons.append(button)
     
-    def update():
-        nonlocal current_pattern_classes
-        match pattern_toggle.value:
-            case ser.OFF_CODE:
-                ser.send_control_code(strip_id, ser.OFF_CODE)
-                current_pattern_label.set_text('Off')
-                current_pattern_display.classes(remove=current_pattern_classes, add='border border-gray-700 !bg-none')
-                current_pattern_classes = 'border border-gray-700 !bg-none'
-            case ser.RAINBOW_CODE:
-                ser.send_control_code(strip_id, ser.RAINBOW_CODE)
-                ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
-                current_pattern_label.set_text('Rainbow')
-                current_pattern_display.classes(remove=current_pattern_classes, add='border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700')
-                current_pattern_classes = 'border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700'
-            case ser.SOLID_CODE:
-                ser.send_control_code(strip_id, ser.SOLID_CODE, hex_color_to_list(color.value))
-                ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
-                current_pattern_label.set_text('Solid')
-                current_pattern_display.classes(remove=current_pattern_classes, add=f'border-none !bg-[{color.value}]')
-                current_pattern_classes = f'border-none !bg-[{color.value}]'
-            case ser.GRADIENT_CODE:
-                ser.send_control_code(strip_id, ser.GRADIENT_CODE, hex_color_to_list(startcolor.value) + hex_color_to_list(endcolor.value))
-                ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
-                current_pattern_label.set_text('Gradient')
-                current_pattern_display.classes(remove=current_pattern_classes, add=f'border-none !bg-linear-to-r from-[{startcolor.value}] to-[{endcolor.value}]')
-                current_pattern_classes = f'border-none !bg-linear-to-r from-[{startcolor.value}] to-[{endcolor.value}]'
-        ui.notify(f'{config[str(strip_id)]['Name']} Strip updated')
+    return current_pattern_display
+
+def select_strip(strip_id: int, strip_buttons: list[ui.button], strip_panels: list[StripPanel]):
+    for button in strip_buttons:
+        button.classes(remove='!bg-neutral-700', add='!bg-neutral-900')
+        
+    strip_buttons[strip_id].classes(remove='!bg-neutral-900', add='!bg-neutral-700')
+         
+    for panel in strip_panels:
+        panel.set_visibility(False)
     
-    def show_brightness(should_show):
-        brightness_label.set_visibility(should_show)
-        brightness.set_visibility(should_show)
-        
-    def show_color(should_show):
-        color_label.set_visibility(should_show)
-        color.set_visibility(should_show)
-        
-    def show_gradient(should_show):
-        startcolor_label.set_visibility(should_show)
-        startcolor.set_visibility(should_show)
-        endcolor_label.set_visibility(should_show)
-        endcolor.set_visibility(should_show)
-
-    with ui.card().classes('w-full'), ui.expansion(group='strips').classes('w-full') as expansion:
-        config_dialog = config_popup(strip_id)
-
-        with expansion.add_slot('header'), ui.row().classes('items-center w-full'):
-            ui.label(f"{config[str(strip_id)]['Name']} Strip").classes('text-lg font-bold grow')
-            current_pattern_label = ui.label('Off').classes('italic justify-self-end')
-            ui.button(icon='settings', on_click=lambda: config_dialog.open()).tooltip('Configure Strip').classes('justify-self-end')
-            current_pattern_display = ui.card().classes('no-shadow border border-gray-700 bg-none w-full h-3 p-0')
-            
-        pattern_toggle = ui.toggle(PATTERN_DICT, on_change=lambda event: change_pattern(event.value), value=ser.OFF_CODE)
-        
-        brightness_label = ui.label('Brightness:')
-        brightness = ui.slider(min=0, max=255, step = 1, value = 255)
-        
-        color_label = ui.label('Color:')
-        color = ui.color_input(value="#DDAA88", preview=True)
-
-        startcolor_label = ui.label('Start Color:')
-        startcolor = ui.color_input(value="#FFFFFF", preview=True)
-        
-        endcolor_label = ui.label('End Color:')
-        endcolor = ui.color_input(value="#0009B8", preview=True)
-        
-        ui.button('Update', on_click=update).tooltip('Apply pattern to strip')
-        
-        change_pattern(pattern_toggle.value)
+    strip_panels[strip_id].set_visibility(True)
     
 @ui.refreshable
 def root() -> None:
     with ui.row():
         ui.button('Add Strip +', on_click=config_popup)
         ui.button(icon='refresh', on_click=update_config).tooltip('Refresh Configuration from config.json')
-    for strip_id in config.keys():
-        strip_section(int(strip_id))
+    strip_buttons: list[ui.button] = []
+    pattern_displays: list[ui.card] = []
+    strip_panels: list[StripPanel] = []
+    with ui.row(align_items='stretch').classes('w-full'):
+        with ui.column().classes('w-[25%] gap-0'):
+            for strip_id in config.keys():
+                pattern_displays.append(strip_selection_card(int(strip_id), strip_buttons, strip_panels))
+        ui.card().classes('grow')
+        with ui.column().classes('w-[30%] justify-self-end'):
+            for strip_id in config.keys():
+                strip_panels.append(StripPanel(int(strip_id), pattern_displays))
+                strip_panels[-1].set_visibility(False)
     
 def main():
     root()
-    ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(600, 800))
+    ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(1280, 720))
 
 config = get_config()
+current_patterns = [ser.OFF_CODE for _ in config.keys()]
 
 if __name__ in {'__main__', '__mp_main__'}:
     main()
