@@ -1,9 +1,8 @@
-from nicegui import ui
+from nicegui import app, ui
 import nextmatch
 import serialcontrol as ser
 import json
 
-#ID_DICT = {0: 'Left', 1: 'Right', 2: 'Shelf', 3: 'Workbench'}
 PATTERN_DICT = {ser.OFF_CODE: 'Off', ser.RAINBOW_CODE: 'Rainbow', ser.SOLID_CODE: 'Solid', ser.GRADIENT_CODE: 'Gradient'}    
 
 def hex_color_to_list(hex) -> list[int]:
@@ -18,8 +17,6 @@ def save_config():
 def get_config() -> dict[str, dict]:
     with open('config.json') as f:
         return json.load(f)
-
-config = get_config()
     
 def update_config():
     global config
@@ -89,15 +86,23 @@ def strip_section(strip_id: int):
         match pattern_toggle.value:
             case ser.OFF_CODE:
                 ser.send_control_code(strip_id, ser.OFF_CODE)
+                current_pattern_label.set_text('Off')
+                current_pattern_display.classes('border border-gray-700 !bg-none')
             case ser.RAINBOW_CODE:
                 ser.send_control_code(strip_id, ser.RAINBOW_CODE)
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
+                current_pattern_label.set_text('Rainbow')
+                current_pattern_display.classes('border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700')
             case ser.SOLID_CODE:
                 ser.send_control_code(strip_id, ser.SOLID_CODE, hex_color_to_list(color.value))
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
+                current_pattern_label.set_text('Solid')
+                current_pattern_display.classes(f'border-none !bg-[{color.value}]')
             case ser.GRADIENT_CODE:
                 ser.send_control_code(strip_id, ser.GRADIENT_CODE, hex_color_to_list(startcolor.value) + hex_color_to_list(endcolor.value))
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
+                current_pattern_label.set_text('Gradient')
+                current_pattern_display.classes(f'border-none !bg-linear-to-r from-[{startcolor.value}] to-[{endcolor.value}]')
         ui.notify(f'{config[str(strip_id)]['Name']} Strip updated')
     
     def show_brightness(should_show):
@@ -114,12 +119,15 @@ def strip_section(strip_id: int):
         endcolor_label.set_visibility(should_show)
         endcolor.set_visibility(should_show)
 
-    with ui.card(), ui.expansion().classes('w-full') as expansion:
+    with ui.card().classes('w-full'), ui.expansion(group='strips').classes('w-full') as expansion:
         config_dialog = config_popup(strip_id)
 
-        with expansion.add_slot('header'), ui.row().classes('items-center justify-between w-full'):
-            ui.label(f"{config[str(strip_id)]['Name']} Strip").classes('text-lg font-bold')
-            ui.button(icon='settings', on_click=lambda: config_dialog.open())
+        with expansion.add_slot('header'), ui.row().classes('items-center w-full'):
+            ui.label(f"{config[str(strip_id)]['Name']} Strip").classes('text-lg font-bold grow')
+            current_pattern_label = ui.label('Off').classes('italic justify-self-end')
+            ui.button(icon='settings', on_click=lambda: config_dialog.open()).tooltip('Configure Strip').classes('justify-self-end')
+            current_pattern_display = ui.card().classes('no-shadow border border-gray-700 bg-none w-full h-3 p-0')
+            
         pattern_toggle = ui.toggle(PATTERN_DICT, on_change=lambda event: change_pattern(event.value), value=ser.OFF_CODE)
         
         brightness_label = ui.label('Brightness:')
@@ -134,19 +142,22 @@ def strip_section(strip_id: int):
         endcolor_label = ui.label('End Color:')
         endcolor = ui.color_input(value="#0009B8", preview=True)
         
-        ui.button('Update', on_click=update)
+        ui.button('Update', on_click=update).tooltip('Apply pattern to strip')
         
         change_pattern(pattern_toggle.value)
     
 def root():
+    
     with ui.row():
         ui.button('Add Strip +', on_click=config_popup)
-        ui.button(icon='refresh', on_click=update_config)
+        ui.button(icon='refresh', on_click=update_config).tooltip('Refresh Configuration from config.json')
     for strip_id in config.keys():
         strip_section(int(strip_id))
     
 def main():
-    ui.run(root, title='CaseyLED Controller', dark=True)
+    ui.run(root, title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(600, 800))
+
+config = get_config()
 
 if __name__ in {'__main__', '__mp_main__'}:
     main()

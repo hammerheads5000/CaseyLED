@@ -47,5 +47,3 @@ def get_color(match):
         return 'blue'
     else:
         return None
-    
-print(get_color(get_next_match()))
