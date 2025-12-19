@@ -21,6 +21,7 @@ def get_config() -> dict[str, dict]:
 def update_config():
     global config
     config = get_config()
+    root.refresh()
 
 def config_strip(strip_id: int, pin: int, name: str, length: int, reversed: bool):
     global config
@@ -37,6 +38,7 @@ def config_strip(strip_id: int, pin: int, name: str, length: int, reversed: bool
             'Reversed': reversed
         }
     save_config()
+    root.refresh()
     
 
 def config_popup(strip_id=-1) -> ui.dialog:
@@ -63,6 +65,8 @@ def config_popup(strip_id=-1) -> ui.dialog:
 
 def strip_section(strip_id: int):
     global config
+    current_pattern_classes = 'border border-gray-700 bg-none'
+
     def change_pattern(pattern):
         match pattern:
             case ser.OFF_CODE:
@@ -83,26 +87,31 @@ def strip_section(strip_id: int):
                 show_gradient(True)
     
     def update():
+        nonlocal current_pattern_classes
         match pattern_toggle.value:
             case ser.OFF_CODE:
                 ser.send_control_code(strip_id, ser.OFF_CODE)
                 current_pattern_label.set_text('Off')
-                current_pattern_display.classes('border border-gray-700 !bg-none')
+                current_pattern_display.classes(remove=current_pattern_classes, add='border border-gray-700 !bg-none')
+                current_pattern_classes = 'border border-gray-700 !bg-none'
             case ser.RAINBOW_CODE:
                 ser.send_control_code(strip_id, ser.RAINBOW_CODE)
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
                 current_pattern_label.set_text('Rainbow')
-                current_pattern_display.classes('border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700')
+                current_pattern_display.classes(remove=current_pattern_classes, add='border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700')
+                current_pattern_classes = 'border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700'
             case ser.SOLID_CODE:
                 ser.send_control_code(strip_id, ser.SOLID_CODE, hex_color_to_list(color.value))
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
                 current_pattern_label.set_text('Solid')
-                current_pattern_display.classes(f'border-none !bg-[{color.value}]')
+                current_pattern_display.classes(remove=current_pattern_classes, add=f'border-none !bg-[{color.value}]')
+                current_pattern_classes = f'border-none !bg-[{color.value}]'
             case ser.GRADIENT_CODE:
                 ser.send_control_code(strip_id, ser.GRADIENT_CODE, hex_color_to_list(startcolor.value) + hex_color_to_list(endcolor.value))
                 ser.send_control_code(strip_id, ser.BRIGHTNESS_CODE, brightness.value)
                 current_pattern_label.set_text('Gradient')
-                current_pattern_display.classes(f'border-none !bg-linear-to-r from-[{startcolor.value}] to-[{endcolor.value}]')
+                current_pattern_display.classes(remove=current_pattern_classes, add=f'border-none !bg-linear-to-r from-[{startcolor.value}] to-[{endcolor.value}]')
+                current_pattern_classes = f'border-none !bg-linear-to-r from-[{startcolor.value}] to-[{endcolor.value}]'
         ui.notify(f'{config[str(strip_id)]['Name']} Strip updated')
     
     def show_brightness(should_show):
@@ -146,8 +155,8 @@ def strip_section(strip_id: int):
         
         change_pattern(pattern_toggle.value)
     
-def root():
-    
+@ui.refreshable
+def root() -> None:
     with ui.row():
         ui.button('Add Strip +', on_click=config_popup)
         ui.button(icon='refresh', on_click=update_config).tooltip('Refresh Configuration from config.json')
@@ -155,7 +164,8 @@ def root():
         strip_section(int(strip_id))
     
 def main():
-    ui.run(root, title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(600, 800))
+    root()
+    ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(600, 800))
 
 config = get_config()
 
