@@ -7,7 +7,7 @@ _serial_port = serial.Serial(
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE,
         bytesize=serial.EIGHTBITS)
-if not _serial_port.isOpen():
+if not _serial_port.is_open:
     _serial_port.open()
 
 # Config codes
@@ -30,7 +30,14 @@ SET_RANGE_CODE = 0b0110 # 2 bytes for start + end idx, 3 bytes for color
 BRIGHTNESS_CODE = 0b1000 # 1 byte for brightness level
 BREATHING_CODE = 0b1001 # 1 byte 
 
-def send_control_code(id, code, data: (list[int] | int) = []):
+def send_config(id: int, reversed: bool, pin: int, length: int):
+    pass
+    length_byte0 = (length >> 8) & (0b11)
+    byte0 = (1 << 7 if reversed else 0) | ((pin & 0b11111) << 2) | length_byte0
+    byte1 = length & 0xFF
+    send_control_code(id, CONFIG_STRIP_CODE, [byte0, byte1])
+    
+def send_control_code(id: int, code: int, data: (list[int] | int) = []):
     if isinstance(data, list):
         _serial_port.write([0xFF, id << 4 | code] + data)
     else:
