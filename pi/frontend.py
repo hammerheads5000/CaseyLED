@@ -155,8 +155,8 @@ def config_popup(strip_id=-1) -> ui.dialog:
 
 def strip_selection_card(strip_id, strip_buttons: list[ui.button], strip_panels: list[StripPanel]) -> ui.card:
     current_pattern_display = None
-    with ui.button(on_click=lambda e: select_strip(strip_id, strip_buttons, strip_panels)).classes('w-full !bg-neutral-900 justify-start') as button:
-        ui.label(f"{config[str(strip_id)]['Name']} Strip").classes('text-lg')
+    with ui.button(on_click=lambda e: select_strip(strip_id, strip_buttons, strip_panels)).classes('w-full !bg-neutral-900 p-2').props('align="left" no-caps') as button:
+        ui.label(f"{config[str(strip_id)]['Name']} Strip")
         current_pattern_display = ui.card().classes('no-shadow border border-gray-700 bg-none grow h-3 p-0 w-full')
         strip_buttons.append(button)
     
@@ -185,7 +185,7 @@ def root() -> None:
         with ui.column().classes('w-[25%] gap-0'):
             for strip_id in config.keys():
                 pattern_displays.append(strip_selection_card(int(strip_id), strip_buttons, strip_panels))
-        ui.card().classes('grow')
+        ui.element().classes('grow')
         with ui.column().classes('w-[30%] justify-self-end'):
             for strip_id in config.keys():
                 strip_panels.append(StripPanel(int(strip_id), pattern_displays))
