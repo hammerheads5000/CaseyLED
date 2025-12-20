@@ -51,8 +51,38 @@ async def config_strip(strip_id: int, pin: int, name: str, length: int, reversed
         })
     
     await root.refresh()
+    panel_states.append({
+            'Pattern': strip_panels[-1].pattern_toggle.value,
+            'Brightness': strip_panels[-1].brightness.value,
+            'Color': strip_panels[-1].color.value,
+            'Start Color': strip_panels[-1].startcolor.value,
+            'End Color': strip_panels[-1].endcolor.value,
+            'Visible': strip_panels[-1].card.visible
+    })
+    for strip_id in range(len(strip_panels)):
+        strip_panels[strip_id].load_from_state(panel_states[strip_id])
+        
+async def delete_strip(strip_id: int):
+    global configs
+    configs.pop(strip_id)
+    save_config()
     
-    for strip_id in range(len(panel_states)):
+    panel_states = []
+    for panel in strip_panels:
+        panel_states.append({
+                'Pattern': panel.pattern_toggle.value,
+                'Brightness': panel.brightness.value,
+                'Color': panel.color.value,
+                'Start Color': panel.startcolor.value,
+                'End Color': panel.endcolor.value,
+                'Visible': panel.card.visible
+        })
+        
+    panel_states.pop(strip_id)
+    
+    await root.refresh()
+    
+    for strip_id in range(len(strip_panels)):
         strip_panels[strip_id].load_from_state(panel_states[strip_id])
     
 class StripPanel:
@@ -161,6 +191,16 @@ def config_popup(strip_id=-1) -> ui.dialog:
     async def _config(strip_id: int, pin: int, name: str, length: int, reversed: bool):
         await config_strip(strip_id, pin, name, length, reversed)
         dialog.close()
+    async def _delete():
+        with ui.dialog() as delete_dialog, ui.card():
+            ui.label('Are you sure you want to delete this strip?')
+            ui.button('Delete Strip', on_click=lambda: delete_dialog.submit('Yes')).classes("!bg-red-700")
+            
+        result = await delete_dialog
+        if result is not None:
+            await delete_strip(strip_id)
+            dialog.close()
+        
     with ui.dialog() as dialog, ui.card():
         title = ui.label()
         name_input = ui.input(label='Name')
@@ -177,6 +217,7 @@ def config_popup(strip_id=-1) -> ui.dialog:
             name_input.set_value(configs[strip_id]['Name'])
             reversed_input.set_value(configs[strip_id]['Reversed'])
         ui.button('Configure strip', on_click=lambda: _config(strip_id, int(pin_input.value), name_input.value, int(length_input.value), reversed_input.value))
+        ui.button('Delete strip', on_click=_delete).classes("!bg-red-700")
     return dialog
 
 def strip_selection_card(strip_id, strip_buttons: list[ui.button]) -> ui.card:
@@ -220,7 +261,7 @@ def root():
     
 def main():
     root()
-    ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(1280, 720))
+    ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(800, 800))
 
 configs = get_config()
 current_patterns = [ser.OFF_CODE]*len(configs)
