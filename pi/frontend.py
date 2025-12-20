@@ -74,18 +74,18 @@ class StripPanel:
             self.pattern_toggle = ui.toggle(PATTERN_DICT, on_change=self.update_pattern_ui, value=ser.OFF_CODE)
             
             self.brightness_label = ui.label('Brightness:')
-            self.brightness = ui.slider(min=0, max=255, step = 1, value = 255)
+            self.brightness = ui.slider(min=0, max=255, step = 1, value = 255, on_change=self.update)
             
             self.color_label = ui.label('Color:')
-            self.color = ui.color_input(value="#DDAA88", preview=True)
+            self.color = ui.color_input(value="#DDAA88", preview=True, on_change=self.update)
 
             self.startcolor_label = ui.label('Start Color:')
-            self.startcolor = ui.color_input(value="#FFFFFF", preview=True)
+            self.startcolor = ui.color_input(value="#FFFFFF", preview=True, on_change=self.update)
             
             self.endcolor_label = ui.label('End Color:')
-            self.endcolor = ui.color_input(value="#0009B8", preview=True)
+            self.endcolor = ui.color_input(value="#0009B8", preview=True, on_change=self.update)
             
-            ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')      
+            # ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')      
             
     def update_pattern_ui(self):
         match self.pattern_toggle.value:
@@ -105,6 +105,7 @@ class StripPanel:
                 self.show_brightness(True)
                 self.show_color(False)
                 self.show_gradient(True)
+        self.update()
                 
     def update(self):
         match self.pattern_toggle.value:
