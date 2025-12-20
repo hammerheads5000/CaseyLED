@@ -1,32 +1,32 @@
 {
-    "0": {
+    "Strips": [{
         "Name": "Left",
         "Pin": 10,
         "Length": 106,
         "Reversed": false
     },
-    "1": {
+    {
         "Name": "Right",
         "Pin": 4,
         "Length": 105,
         "Reversed": false
     },
-    "2": {
+    {
         "Name": "Shelf",
         "Pin": 6,
         "Length": 140,
         "Reversed": false
     },
-    "3": {
+    {
         "Name": "Workbench",
         "Pin": 8,
         "Length": 140,
         "Reversed": false
     },
-    "4": {
+    {
         "Name": "Workbench Center",
         "Pin": 12,
         "Length": 140,
         "Reversed": false
-    }
+    }]
 }

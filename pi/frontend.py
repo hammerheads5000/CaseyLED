@@ -10,40 +10,40 @@ def hex_color_to_list(hex) -> list[int]:
     return [byte >> 16, (byte >> 8) & 0xFF, byte & 0xFF]
 
 def save_config():
-    global config
+    global configs
     with open('config.json', 'w') as f:
-        json.dump(config, f, indent=4)
+        json.dump({'Strips': configs}, f, indent=4)
         
-def get_config() -> dict[str, dict]:
+def get_config() -> list[dict]:
     with open('config.json') as f:
-        return json.load(f)
+        return json.load(f)['Strips']
     
 def update_config():
-    global config
-    config = get_config()
+    global configs
+    configs = get_config()
     root.refresh()
 
 def config_strip(strip_id: int, pin: int, name: str, length: int, reversed: bool):
-    global config
-    if str(strip_id) in config.keys():
-        config[str(strip_id)]['Name'] = name
-        config[str(strip_id)]['Pin'] = pin
-        config[str(strip_id)]['Length'] = length
-        config[str(strip_id)]['Reversed'] = reversed
+    global configs
+    if strip_id < len(configs):
+        configs[strip_id]['Name'] = name
+        configs[strip_id]['Pin'] = pin
+        configs[strip_id]['Length'] = length
+        configs[strip_id]['Reversed'] = reversed
     else:
-        config[str(strip_id)] = {
+        configs.append({
             'Name': name,
             'Pin': pin,
             'Length': length,
             'Reversed': reversed
-        }
+        })
     save_config()
     root.refresh()
     
 class StripPanel:
     def __init__(self, strip_id: int, pattern_displays: list[ui.card]):
-        global config
-        self.name = config[str(strip_id)]['Name']
+        global configs
+        self.name = configs[strip_id]['Name']
         self.current_pattern_classes = 'border border-gray-700 bg-none'
         self.strip_id = strip_id
         self.pattern_display = pattern_displays[strip_id]
@@ -143,20 +143,20 @@ def config_popup(strip_id=-1) -> ui.dialog:
         reversed_input = ui.checkbox('Reversed')
         if strip_id == -1:
             title.set_text('Add Strip')
-            strip_id = len(config.keys())
+            strip_id = len(configs)
         else:
             title.set_text('Configure Strip')
-            pin_input.set_value(config[str(strip_id)]['Pin'])
-            length_input.set_value(config[str(strip_id)]['Length'])
-            name_input.set_value(config[str(strip_id)]['Name'])
-            reversed_input.set_value(config[str(strip_id)]['Reversed'])
+            pin_input.set_value(configs[strip_id]['Pin'])
+            length_input.set_value(configs[strip_id]['Length'])
+            name_input.set_value(configs[strip_id]['Name'])
+            reversed_input.set_value(configs[strip_id]['Reversed'])
         ui.button('Configure strip', on_click=lambda: _config(strip_id, int(pin_input.value), name_input.value, int(length_input.value), reversed_input.value))
     return dialog
 
 def strip_selection_card(strip_id, strip_buttons: list[ui.button], strip_panels: list[StripPanel]) -> ui.card:
     current_pattern_display = None
     with ui.button(on_click=lambda e: select_strip(strip_id, strip_buttons, strip_panels)).classes('w-full !bg-neutral-900 p-2').props('align="left" no-caps') as button:
-        ui.label(f"{config[str(strip_id)]['Name']} Strip")
+        ui.label(f"{configs[strip_id]['Name']} Strip")
         current_pattern_display = ui.card().classes('no-shadow border border-gray-700 bg-none grow h-3 p-0 w-full')
         strip_buttons.append(button)
     
@@ -183,20 +183,20 @@ def root() -> None:
     strip_panels: list[StripPanel] = []
     with ui.row(align_items='stretch').classes('w-full'):
         with ui.column().classes('w-[25%] gap-0'):
-            for strip_id in config.keys():
-                pattern_displays.append(strip_selection_card(int(strip_id), strip_buttons, strip_panels))
+            for strip_id in range(len(configs)):
+                pattern_displays.append(strip_selection_card(strip_id, strip_buttons, strip_panels))
         ui.element().classes('grow')
         with ui.column().classes('w-[30%] justify-self-end'):
-            for strip_id in config.keys():
-                strip_panels.append(StripPanel(int(strip_id), pattern_displays))
+            for strip_id in range(len(configs)):
+                strip_panels.append(StripPanel(strip_id, pattern_displays))
                 strip_panels[-1].set_visibility(False)
     
 def main():
     root()
     ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(1280, 720))
 
-config = get_config()
-current_patterns = [ser.OFF_CODE for _ in config.keys()]
+configs = get_config()
+current_patterns = [ser.OFF_CODE]*len(configs)
 
 if __name__ in {'__main__', '__mp_main__'}:
     main()
