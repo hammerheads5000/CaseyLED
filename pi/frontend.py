@@ -3,7 +3,7 @@ import nextmatch
 import serialcontrol as ser
 import json
 
-PATTERN_DICT = {ser.OFF_CODE: 'Off', ser.RAINBOW_CODE: 'Rainbow', ser.SOLID_CODE: 'Solid', ser.GRADIENT_CODE: 'Gradient'}    
+PATTERN_DICT = {ser.OFF_CODE: 'Off', ser.RAINBOW_CODE: 'Rainbow', ser.SOLID_CODE: 'Solid', ser.GRADIENT_CODE: 'Gradient', ser.BREATHING_CODE: 'Breathing'}    
 
 def hex_color_to_list(hex) -> list[int]:
     byte = int(hex[1:], 16)
@@ -47,6 +47,7 @@ async def config_strip(strip_id: int, pin: int, name: str, length: int, reversed
                 'Color': panel.color.value,
                 'Start Color': panel.startcolor.value,
                 'End Color': panel.endcolor.value,
+                'Speed': panel.speed.value,
                 'Visible': panel.card.visible
         })
     
@@ -59,6 +60,7 @@ async def config_strip(strip_id: int, pin: int, name: str, length: int, reversed
             'Color': strip_panels[-1].color.value,
             'Start Color': strip_panels[-1].startcolor.value,
             'End Color': strip_panels[-1].endcolor.value,
+            'Speed': strip_panels[-1].speed.value,
             'Visible': strip_panels[-1].card.visible
     })
     for strip_id in range(len(strip_panels)):
@@ -77,6 +79,7 @@ async def delete_strip(strip_id: int):
                 'Color': panel.color.value,
                 'Start Color': panel.startcolor.value,
                 'End Color': panel.endcolor.value,
+                'Speed': panel.speed.value,
                 'Visible': panel.card.visible
         })
         
@@ -119,26 +122,28 @@ class StripPanel:
             self.endcolor_label = ui.label('End Color:')
             self.endcolor = ui.color_input(value="#0009B8", preview=True, on_change=self.update)
             
+            self.speed_label = ui.label('Speed:')
+            self.speed = ui.slider(min=0, max=255, step = 1, value = 80, on_change=self.update)
+            
             # ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')      
             
     def update_pattern_ui(self):
+        self.show_brightness(True)
+        self.show_color(False)
+        self.show_gradient(False)
+        self.show_speed(False)
         match self.pattern_toggle.value:
             case ser.OFF_CODE:
                 self.show_brightness(False)
-                self.show_color(False)
-                self.show_gradient(False)
             case ser.RAINBOW_CODE:
-                self.show_brightness(True)
-                self.show_color(False)
-                self.show_gradient(False)
+                self.show_speed(True)
             case ser.SOLID_CODE:
-                self.show_brightness(True)
                 self.show_color(True)
-                self.show_gradient(False)
             case ser.GRADIENT_CODE:
-                self.show_brightness(True)
-                self.show_color(False)
                 self.show_gradient(True)
+            case ser.BREATHING_CODE:
+                self.show_color(True)
+                self.show_speed(True)
         self.update()
                 
     def update(self):
@@ -149,19 +154,23 @@ class StripPanel:
                 self.current_pattern_classes = 'border border-gray-700 !bg-none'
             case ser.RAINBOW_CODE:
                 ser.send_control_code(self.strip_id, ser.RAINBOW_CODE)
-                ser.send_control_code(self.strip_id, ser.BRIGHTNESS_CODE, self.brightness.value)
                 self.pattern_display.classes(remove=self.current_pattern_classes, add='border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700')
                 self.current_pattern_classes = 'border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700'
             case ser.SOLID_CODE:
                 ser.send_control_code(self.strip_id, ser.SOLID_CODE, hex_color_to_list(self.color.value))
-                ser.send_control_code(self.strip_id, ser.BRIGHTNESS_CODE, self.brightness.value)
                 self.pattern_display.classes(remove=self.current_pattern_classes, add=f'border-none !bg-[{self.color.value}]')
                 self.current_pattern_classes = f'border-none !bg-[{self.color.value}]'
             case ser.GRADIENT_CODE:
                 ser.send_control_code(self.strip_id, ser.GRADIENT_CODE, hex_color_to_list(self.startcolor.value) + hex_color_to_list(self.endcolor.value))
-                ser.send_control_code(self.strip_id, ser.BRIGHTNESS_CODE, self.brightness.value)
                 self.pattern_display.classes(remove=self.current_pattern_classes, add=f'border-none !bg-linear-to-r from-[{self.startcolor.value}] to-[{self.endcolor.value}]')
                 self.current_pattern_classes = f'border-none !bg-linear-to-r from-[{self.startcolor.value}] to-[{self.endcolor.value}]'
+            case ser.BREATHING_CODE:
+                ser.send_control_code(self.strip_id, ser.SOLID_CODE, hex_color_to_list(self.color.value))
+                ser.send_control_code(self.strip_id, ser.BREATHING_CODE, self.speed.value)
+                self.pattern_display.classes(remove=self.current_pattern_classes, add=f'border-none !bg-[{self.color.value}]')
+                self.current_pattern_classes = f'border-none !bg-[{self.color.value}]'
+                
+        ser.send_control_code(self.strip_id, ser.BRIGHTNESS_CODE, self.brightness.value)
 
     def show_brightness(self, should_show: bool):
         self.brightness_label.set_visibility(should_show)
@@ -176,6 +185,10 @@ class StripPanel:
         self.startcolor.set_visibility(should_show)
         self.endcolor_label.set_visibility(should_show)
         self.endcolor.set_visibility(should_show)
+        
+    def show_speed(self, should_show: bool):
+        self.speed_label.set_visibility(should_show)
+        self.speed.set_visibility(should_show)
 
     def set_visibility(self, should_show: bool):
         self.card.set_visibility(should_show)
@@ -187,6 +200,7 @@ class StripPanel:
         self.color.set_value(panel_state['Color'])
         self.startcolor.set_value(panel_state['Start Color'])
         self.endcolor.set_value(panel_state['End Color'])
+        self.speed.set_value(panel_state['Speed'])
         self.set_visibility(panel_state['Visible'])
         self.update_pattern_ui()
         self.update()

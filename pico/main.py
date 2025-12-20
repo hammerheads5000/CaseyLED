@@ -104,7 +104,7 @@ def apply_pattern(strips: list[LEDStrip], patterns: list[Pattern], pattern_codes
         pattern_codes[strip_id]['Codes'].clear()
         pattern_codes[strip_id]['Data'].clear()
     elif control_code == RAINBOW_CODE:
-        patterns[strip_id] = RainbowPattern(led_count, data[0]*5/UPDATE_FREQUENCY, 2.0)
+        patterns[strip_id] = RainbowPattern(led_count, data[0]*5/255/UPDATE_FREQUENCY, 2.0)
         
         pattern_codes[strip_id]['Codes'].clear()
         pattern_codes[strip_id]['Data'].clear()
@@ -118,7 +118,7 @@ def apply_pattern(strips: list[LEDStrip], patterns: list[Pattern], pattern_codes
     elif control_code == BRIGHTNESS_CODE:
         patterns[strip_id].set_brightness(data[0]/255)
     elif control_code == BREATHING_CODE:
-        patterns[strip_id] = BreathingPattern(patterns[strip_id], 0.125 + data[0]*8/255)
+        patterns[strip_id] = BreathingPattern(patterns[strip_id], data[0]*5/255/UPDATE_FREQUENCY)
     
     pattern_codes[strip_id]['Codes'].append(control_code)
     pattern_codes[strip_id]['Data'].append(data)

@@ -118,13 +118,13 @@ class MovingPattern(AnimatedPattern):
         self.offest(self.speed)
         
 class BreathingPattern(AnimatedPattern):
-    def __init__(self, pattern: Pattern, period: float):
+    def __init__(self, pattern: Pattern, speed: float):
         super().__init__(pattern)
-        self.period = period
+        self.speed = speed
         self.frame = 0
         
     def update(self):
-        brightness = 0.5-0.5*math.cos(2*math.pi*self.frame/self.period)
+        brightness = 0.5+0.5*math.cos(2*math.pi*self.frame*self.speed)
         self.frame += 1
-        self.frame %= self.period
+        self.frame %= self.speed
         self.set_brightness(brightness)
