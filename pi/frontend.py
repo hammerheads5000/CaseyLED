@@ -19,11 +19,11 @@ def get_config() -> list[dict]:
         return json.load(f)['Strips']
     
 def update_config():
-    global configs
+    global get_state, state, configs
     configs = get_config()
     root.refresh()
 
-def config_strip(strip_id: int, pin: int, name: str, length: int, reversed: bool):
+async def config_strip(strip_id: int, pin: int, name: str, length: int, reversed: bool):
     global configs
     if strip_id < len(configs):
         configs[strip_id]['Name'] = name
@@ -38,7 +38,22 @@ def config_strip(strip_id: int, pin: int, name: str, length: int, reversed: bool
             'Reversed': reversed
         })
     save_config()
-    root.refresh()
+    
+    panel_states = []
+    for panel in strip_panels:
+        panel_states.append({
+                'Pattern': panel.pattern_toggle.value,
+                'Brightness': panel.brightness.value,
+                'Color': panel.color.value,
+                'Start Color': panel.startcolor.value,
+                'End Color': panel.endcolor.value,
+                'Visible': panel.card.visible
+        })
+    
+    await root.refresh()
+    
+    for strip_id in range(len(panel_states)):
+        strip_panels[strip_id].load_from_state(panel_states[strip_id])
     
 class StripPanel:
     def __init__(self, strip_id: int, pattern_displays: list[ui.card]):
@@ -131,9 +146,19 @@ class StripPanel:
         self.card.set_visibility(should_show)
         self.update_pattern_ui()
 
+    def load_from_state(self, panel_state: dict):
+        self.pattern_toggle.set_value(panel_state['Pattern'])
+        self.brightness.set_value(panel_state['Brightness'])
+        self.color.set_value(panel_state['Color'])
+        self.startcolor.set_value(panel_state['Start Color'])
+        self.endcolor.set_value(panel_state['End Color'])
+        self.set_visibility(panel_state['Visible'])
+        self.update_pattern_ui()
+        self.update()
+
 def config_popup(strip_id=-1) -> ui.dialog:
-    def _config(strip_id: int, pin: int, name: str, length: int, reversed: bool):
-        config_strip(strip_id, pin, name, length, reversed)
+    async def _config(strip_id: int, pin: int, name: str, length: int, reversed: bool):
+        await config_strip(strip_id, pin, name, length, reversed)
         dialog.close()
     with ui.dialog() as dialog, ui.card():
         title = ui.label()
@@ -153,16 +178,16 @@ def config_popup(strip_id=-1) -> ui.dialog:
         ui.button('Configure strip', on_click=lambda: _config(strip_id, int(pin_input.value), name_input.value, int(length_input.value), reversed_input.value))
     return dialog
 
-def strip_selection_card(strip_id, strip_buttons: list[ui.button], strip_panels: list[StripPanel]) -> ui.card:
+def strip_selection_card(strip_id, strip_buttons: list[ui.button]) -> ui.card:
     current_pattern_display = None
-    with ui.button(on_click=lambda e: select_strip(strip_id, strip_buttons, strip_panels)).classes('w-full !bg-neutral-900 p-2').props('align="left" no-caps') as button:
+    with ui.button(on_click=lambda e: select_strip(strip_id, strip_buttons)).classes('w-full !bg-neutral-900 p-2').props('align="left" no-caps') as button:
         ui.label(f"{configs[strip_id]['Name']} Strip")
         current_pattern_display = ui.card().classes('no-shadow border border-gray-700 bg-none grow h-3 p-0 w-full')
         strip_buttons.append(button)
     
     return current_pattern_display
 
-def select_strip(strip_id: int, strip_buttons: list[ui.button], strip_panels: list[StripPanel]):
+def select_strip(strip_id: int, strip_buttons: list[ui.button]):
     for button in strip_buttons:
         button.classes(remove='!bg-neutral-700', add='!bg-neutral-900')
         
@@ -174,17 +199,18 @@ def select_strip(strip_id: int, strip_buttons: list[ui.button], strip_panels: li
     strip_panels[strip_id].set_visibility(True)
     
 @ui.refreshable
-def root() -> None:
+def root():
+    global strip_panels
     with ui.row():
         ui.button('Add Strip +', on_click=config_popup)
         ui.button(icon='refresh', on_click=update_config).tooltip('Refresh Configuration from config.json')
     strip_buttons: list[ui.button] = []
     pattern_displays: list[ui.card] = []
-    strip_panels: list[StripPanel] = []
+    strip_panels = []
     with ui.row(align_items='stretch').classes('w-full'):
         with ui.column().classes('w-[25%] gap-0'):
             for strip_id in range(len(configs)):
-                pattern_displays.append(strip_selection_card(strip_id, strip_buttons, strip_panels))
+                pattern_displays.append(strip_selection_card(strip_id, strip_buttons))
         ui.element().classes('grow')
         with ui.column().classes('w-[30%] justify-self-end'):
             for strip_id in range(len(configs)):
@@ -197,6 +223,7 @@ def main():
 
 configs = get_config()
 current_patterns = [ser.OFF_CODE]*len(configs)
+strip_panels: list[StripPanel] = []
 
 if __name__ in {'__main__', '__mp_main__'}:
     main()

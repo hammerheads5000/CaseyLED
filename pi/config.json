@@ -1,32 +1,34 @@
 {
-    "Strips": [{
-        "Name": "Left",
-        "Pin": 10,
-        "Length": 106,
-        "Reversed": false
-    },
-    {
-        "Name": "Right",
-        "Pin": 4,
-        "Length": 105,
-        "Reversed": false
-    },
-    {
-        "Name": "Shelf",
-        "Pin": 6,
-        "Length": 140,
-        "Reversed": false
-    },
-    {
-        "Name": "Workbench",
-        "Pin": 8,
-        "Length": 140,
-        "Reversed": false
-    },
-    {
-        "Name": "Workbench Center",
-        "Pin": 12,
-        "Length": 140,
-        "Reversed": false
-    }]
+    "Strips": [
+        {
+            "Name": "Left",
+            "Pin": 10,
+            "Length": 106,
+            "Reversed": false
+        },
+        {
+            "Name": "Right",
+            "Pin": 4,
+            "Length": 105,
+            "Reversed": false
+        },
+        {
+            "Name": "Shelf",
+            "Pin": 6,
+            "Length": 140,
+            "Reversed": false
+        },
+        {
+            "Name": "Workbench",
+            "Pin": 8,
+            "Length": 140,
+            "Reversed": false
+        },
+        {
+            "Name": "Workbench Center",
+            "Pin": 12,
+            "Length": 140,
+            "Reversed": false
+        }
+    ]
 }
