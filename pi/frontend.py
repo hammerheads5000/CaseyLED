@@ -208,12 +208,12 @@ def root():
     strip_buttons: list[ui.button] = []
     pattern_displays: list[ui.card] = []
     strip_panels = []
-    with ui.row(align_items='stretch').classes('w-full'):
-        with ui.column().classes('w-[25%] gap-0'):
+    with ui.row(align_items='stretch', wrap=False).classes('w-full'):
+        with ui.column().classes('w-54 gap-0'):
             for strip_id in range(len(configs)):
                 pattern_displays.append(strip_selection_card(strip_id, strip_buttons))
         ui.element().classes('grow')
-        with ui.column().classes('w-[30%] justify-self-end'):
+        with ui.column().classes('w-min justify-self-end'):
             for strip_id in range(len(configs)):
                 strip_panels.append(StripPanel(strip_id, pattern_displays))
                 strip_panels[-1].set_visibility(False)
