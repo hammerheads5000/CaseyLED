@@ -23,13 +23,18 @@ def hslToRgb(h, s, l):
         
 
 class LEDStrip:
-    def __init__(self, pin, num_leds):
-        self.num_leds = num_leds
-        self.buffer = NeoPixel(pin, num_leds)
+    def __init__(self, pin, length, reversed=False):
+        self.length = length
+        self.buffer = NeoPixel(pin, length)
+        self.pin = pin
+        self.reversed = reversed
         
     def set_range(self, start, buffer_view):
         for i in range(len(buffer_view)):
-            self.buffer[start+i] = buffer_view[i]
+            self.buffer[self.apply_reverse(start+i)] = buffer_view[i]
+            
+    def apply_reverse(self, idx):
+        return self.length - 1 - idx
             
     def apply_pattern(self, pattern):
         self.set_range(pattern.start, pattern.get_buffer_view())
@@ -113,7 +118,7 @@ class MovingPattern(AnimatedPattern):
         self.offest(self.speed)
         
 class BreathingPattern(AnimatedPattern):
-    def __init__(self, pattern: Pattern, period: int):
+    def __init__(self, pattern: Pattern, period: float):
         super().__init__(pattern)
         self.period = period
         self.frame = 0

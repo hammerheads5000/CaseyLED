@@ -50,6 +50,8 @@ async def config_strip(strip_id: int, pin: int, name: str, length: int, reversed
                 'Visible': panel.card.visible
         })
     
+    ser.send_config(strip_id, reversed, pin, length)
+    
     await root.refresh()
     panel_states.append({
             'Pattern': strip_panels[-1].pattern_toggle.value,
@@ -79,6 +81,8 @@ async def delete_strip(strip_id: int):
         })
         
     panel_states.pop(strip_id)
+    
+    ser.send_control_code(strip_id, ser.DELETE_STRIP_CODE)
     
     await root.refresh()
     

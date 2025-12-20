@@ -10,25 +10,6 @@ UPDATE_FREQUENCY = 50 # hz
 
 JSON_CONFIG = 'config.json'
 
-STRIPS = {
-    'Left': {
-        'Pin': Pin.board.GP10,
-        'Count': 106,
-    },
-    'Right': {
-        'Pin': Pin.board.GP4,
-        'Count': 105,
-    },
-    'Workbench': {
-        'Pin': Pin.board.GP8,
-        'Count': 140,
-    },
-    'Shelf': {
-        'Pin': Pin.board.GP6,
-        'Count': 140,
-    },
-}
-
 # Config codes
 CONFIG_STRIP_CODE = 0b1111 # 1 bit for reversed,
                            # 5 bits for GPIO pin,
@@ -42,10 +23,10 @@ SOLID_CODE = 0b0001 # 3 bytes of color
 RAINBOW_CODE = 0b0010 # 1 byte for speed
 GRADIENT_CODE = 0b0011 # 3 bytes for color 1, 3 bytes for color 2
 MOVING_PULSES_CODE = 0b0100 # 4 bits for # pulses, 4 bits for decay, 1 speed byte, 3 for color
-SET_PIXEL_CODE = 0b0101 # 1 byte for idx, 3 bytes for color
-SET_RANGE_CODE = 0b0110 # 2 bytes for start + end idx, 3 bytes for color
 
 # Non-Destructive Control Codes
+SET_PIXEL_CODE = 0b0101 # 1 byte for idx, 3 bytes for color
+SET_RANGE_CODE = 0b0110 # 2 bytes for start + end idx, 3 bytes for color
 BRIGHTNESS_CODE = 0b1000 # 1 byte for brightness level
 BREATHING_CODE = 0b1001 # 1 byte 
 
@@ -64,47 +45,86 @@ DATA_LENGTH = {
     BREATHING_CODE: 1,
 }
 
-def updateJSON(strips):
+def updateJSON(strips: list[LEDStrip], pattern_codes: list[dict[str,list]]):
+    config = {'Strips': [{
+        'Pin': strip.pin,
+        'Length': strip.length,
+        'Reversed': strip.reversed
+    } for strip in strips],
+              'Patterns': pattern_codes}
     with open(JSON_CONFIG, 'w') as f:
-        f.write(json.dumps(strips, indent=4))
-        
-def getJSON():
+        f.write(json.dumps(config, indent=4))
+
+def loadJSON(strips: list[LEDStrip], patterns: list[Pattern], pattern_codes: list[dict[str,list]]):
+    strips.clear()
+    patterns.clear()
+    pattern_codes.clear()
+    
     with open(JSON_CONFIG) as f:
-        return json.load(f)
-
-
-def apply_control(strips, patterns, strip_id, control_code, data):
-    led_count = 0
-    idx = 0
-    if strip_id==LEFT_ID:
-        led_count = STRIPS['Left']['Count']
-        idx = 0
-    elif strip_id == RIGHT_ID:
-        led_count = STRIPS['Right']['Count']
-        idx = 1
-    elif strip_id == WORKBENCH_ID:
-        led_count = STRIPS['Workbench']['Count']
-        idx = 2
-    elif strip_id == SHELF_ID:
-        led_count = STRIPS['Shelf']['Count']
-        idx = 3
+        config = json.load(f)
         
+    for strip in config['Strips']:
+        strips.append(LEDStrip(strip['Pin'], strip['Length'], strip['Reversed']))
+        patterns.append(Pattern.off(strip['Length']))
+        
+    pattern_codes.extend(config['Patterns'])
+    for i in range(len(config['Patterns'])):
+        for j in range(len(config['Patterns'][i]['Codes'])):
+            apply_pattern(strips, patterns, pattern_codes, i, config['Patterns'][i]['Codes'][j], config['Patterns'][i]['Data'][j])
+
+def apply_config(strips: list[LEDStrip], strip_id, data):
+    reversed = bool(data[0] >> 7)
+    pin = (data[0] & 0b01111100) >> 2
+    length = ((data[0] & 0b11) << 8) + data[1]
+    
+    if strip_id < len(strips):    
+        strips[strip_id].length = length
+        strips[strip_id].pin = pin
+        strips[strip_id].reversed = reversed
+    else:
+        strips.append(LEDStrip(pin, length, reversed))
+        
+def delete_strip(strips: list[LEDStrip], patterns: list[Pattern], pattern_codes: list[dict[str,list]], strip_id):
+    strips.pop(strip_id)
+    patterns.pop(strip_id)
+    pattern_codes.pop(strip_id)
+
+def apply_pattern(strips: list[LEDStrip], patterns: list[Pattern], pattern_codes: list[dict[str, list]], strip_id, control_code, data):
+    led_count = strips[strip_id].length
+
     if control_code == OFF_CODE:
-        patterns[idx] = Pattern.off(led_count)
+        patterns[strip_id] = Pattern.off(led_count)
+        
+        pattern_codes[strip_id]['Codes'].clear()
+        pattern_codes[strip_id]['Data'].clear()
     elif control_code == SOLID_CODE:
         color = (data[0], data[1], data[2])
-        patterns[idx] = Pattern.solid(color, led_count)
+        patterns[strip_id] = Pattern.solid(color, led_count)
+        
+        pattern_codes[strip_id]['Codes'].clear()
+        pattern_codes[strip_id]['Data'].clear()
     elif control_code == RAINBOW_CODE:
-        patterns[idx] = RainbowPattern(led_count, 1.5/UPDATE_FREQUENCY, 2.0)
+        patterns[strip_id] = RainbowPattern(led_count, data[0]*5/UPDATE_FREQUENCY, 2.0)
+        
+        pattern_codes[strip_id]['Codes'].clear()
+        pattern_codes[strip_id]['Data'].clear()
     elif control_code == GRADIENT_CODE:
         startcolor = (data[0], data[1], data[2])
         endcolor = (data[3], data[4], data[5])
-        patterns[idx] = MovingPattern(Pattern.gradient(startcolor, endcolor, led_count), 20)
+        patterns[strip_id] = Pattern.gradient(startcolor, endcolor, led_count)
+        
+        pattern_codes[strip_id]['Codes'].clear()
+        pattern_codes[strip_id]['Data'].clear()
     elif control_code == BRIGHTNESS_CODE:
-        patterns[idx].set_brightness(data[0]/255)
+        patterns[strip_id].set_brightness(data[0]/255)
+    elif control_code == BREATHING_CODE:
+        patterns[strip_id] = BreathingPattern(patterns[strip_id], 0.125 + data[0]*8/255)
     
-    strips[idx].apply_pattern(patterns[idx])
-    strips[idx].show()
+    pattern_codes[strip_id]['Codes'].append(control_code)
+    pattern_codes[strip_id]['Data'].append(data)
+    
+    strips[strip_id].apply_pattern(patterns[strip_id])
+    strips[strip_id].show()
             
 def check_input():
     buffer = rusb.getByteBuffer()
@@ -147,25 +167,23 @@ def read_data(buffer0, timeout_ms = 100):
     return strip_id, control_code, data
 
 def main():
-    patterns = [
-        Pattern.off(STRIPS['Left']['Count']),
-        Pattern.off(STRIPS['Right']['Count']),
-        Pattern.off(STRIPS['Workbench']['Count']),
-        Pattern.off(STRIPS['Shelf']['Count'])
-    ]
-    strips = [
-        LEDStrip(STRIPS['Left']['Pin'], STRIPS['Left']['Count']),
-        LEDStrip(STRIPS['Right']['Pin'], STRIPS['Right']['Count']),
-        LEDStrip(STRIPS['Workbench']['Pin'], STRIPS['Workbench']['Count']),
-        LEDStrip(STRIPS['Shelf']['Pin'], STRIPS['Shelf']['Count'])
-    ]
+    patterns = []
+    strips = []
+    pattern_codes = []
+    loadJSON(patterns, strips, pattern_codes)
     
     while True:
         # get input
         check, buffer0 = check_input()
         if check:
             strip_id, control_code, data = read_data(buffer0, timeout_ms=100)
-            apply_control(strips, patterns, strip_id, control_code, data)
+            if control_code == CONFIG_STRIP_CODE:
+                apply_config(strips, strip_id, data)
+            elif control_code == DELETE_STRIP_CODE:
+                delete_strip(strips, patterns, pattern_codes, strip_id)
+            else:
+                apply_pattern(strips, patterns, pattern_codes, strip_id, control_code, data)
+            updateJSON(strips, pattern_codes)
             print("Received data:", strip_id, bin(control_code), data)
         
         for i in range(len(patterns)):
