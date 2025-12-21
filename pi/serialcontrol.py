@@ -1,14 +1,28 @@
 import serial
 import serial.tools.list_ports
 
-_serial_port = serial.Serial(
-        port='/dev/ttyACM0',
-        baudrate=9600,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-        bytesize=serial.EIGHTBITS)
-if not _serial_port.is_open:
-    _serial_port.open()
+try:
+    _serial_port = serial.Serial(
+            port='/dev/ttyACM1',
+            baudrate=115200,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS)
+    if not _serial_port.is_open:
+        _serial_port.open()
+except:
+    print('failed top open /dev/ttyACM1')
+    try:
+        _serial_port = serial.Serial(
+                port='/dev/ttyACM0',
+                baudrate=115200,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                bytesize=serial.EIGHTBITS)
+        if not _serial_port.is_open:
+            _serial_port.open()
+    except Exception as e:
+        raise e
 
 # Config codes
 CONFIG_STRIP_CODE = 0b1111 # 1 bit for reversed,
@@ -21,7 +35,7 @@ UPDATE_FREQ_CODE = 0b1101 # 1 byte for update frequency in hz
 OFF_CODE = 0b0000
 SOLID_CODE = 0b0001 # 3 bytes of color
 RAINBOW_CODE = 0b0010 # 1 byte for speed
-GRADIENT_CODE = 0b0011 # 3 bytes for color 1, 3 bytes for color 2
+GRADIENT_CODE = 0b0111 # 3 bytes for color 1, 3 bytes for color 2
 MOVING_PULSES_CODE = 0b0100 # 4 bits for # pulses, 4 bits for decay, 1 speed byte, 3 for color
 SET_PIXEL_CODE = 0b0101 # 1 byte for idx, 3 bytes for color
 SET_RANGE_CODE = 0b0110 # 2 bytes for start + end idx, 3 bytes for color

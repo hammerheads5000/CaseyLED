@@ -1,5 +1,6 @@
 from neopixel import NeoPixel
 import math
+from machine import Pin
 
 def hueToRgb(p, q, t):
     if t < 0: t += 1
@@ -9,7 +10,8 @@ def hueToRgb(p, q, t):
     if t < 2/3: return p + (q - p) * (2/3 - t) * 6
     return p
 
-def hslToRgb(h, s, l):
+def hslToRgb(hsl):
+    h, s, l = hsl
     if s == 0:
         r = g = b = l
     else:
@@ -20,12 +22,42 @@ def hslToRgb(h, s, l):
         b = hueToRgb(p, q, h - 1/3)
         
     return (round(r * 255), round(g * 255), round(b * 255))
-        
+
+def rgbToHsl(r, g, b):
+    r /= 255
+    g /= 255
+    b /= 255
+    
+    _max = max(r, g, b)
+    _min = min(r, g, b)
+    l = (_max+_min)/2
+    
+    if (_max == _min):
+        return 0,0,l
+
+    d = _max-_min
+    s = d/(2-_max-_min) if l>0.5 else d/(_max+_min)
+    if _max==r:
+        h=(g-b)/d + (6 if g<b else 0)
+    elif _max==g:
+        h=(b-r)/d + 2
+    elif _max==b:
+        h=(r-g)/d + 4
+    h /= 6
+    
+    return h, s, l
+            
+def lerpHsl(start_hsl, end_hsl, t):
+    h = (1-t)*start_hsl[0] + t*end_hsl[0]
+    s = (1-t)*start_hsl[1] + t*end_hsl[1]
+    l = (1-t)*start_hsl[2] + t*end_hsl[2]
+    
+    return h, s, l
 
 class LEDStrip:
     def __init__(self, pin, length, reversed=False):
         self.length = length
-        self.buffer = NeoPixel(pin, length)
+        self.buffer = NeoPixel(Pin(pin), length)
         self.pin = pin
         self.reversed = reversed
         
@@ -41,6 +73,10 @@ class LEDStrip:
         
     def show(self):
         self.buffer.write()
+        
+    def update_pin(self, pin):
+        self.pin = pin
+        self.buffer = NeoPixel(Pin(pin), self.length)
             
 class Pattern:
     def __init__(self, start, buffer_view, brightness: float = 1.0):
@@ -68,13 +104,16 @@ class Pattern:
     
     @staticmethod
     def gradient(color_start, color_end, length: int, start: int = 0):
-        buffer_view = [color_start]*length
+        start_hsl = rgbToHsl(color_start[0], color_start[1], color_start[2])
+        end_hsl = rgbToHsl(color_end[0], color_end[1], color_end[2])
+        buffer_view = [hslToRgb(lerpHsl(start_hsl, end_hsl, t/length)) for t in range(length)]
+        
         return Pattern(start, buffer_view)
     
     @staticmethod
     def rainbow(length: int, start: int = 0):
         hues = [h/length for h in range(length)]
-        buffer_view = [hslToRgb(h, 1, 0.5) for h in hues]
+        buffer_view = [hslToRgb((h, 1, 0.5)) for h in hues]
         return Pattern(start, buffer_view)
     
     def offest(self, offset: int):
@@ -101,7 +140,7 @@ class RainbowPattern(AnimatedPattern):
         
     def update(self):
         hues = [(h*self.scale/self.length + self.shift) % 1 for h in range(self.length)]
-        self.buffer_view = [hslToRgb(h, 1, 0.5) for h in hues]
+        self.buffer_view = [hslToRgb((h, 1, 0.5)) for h in hues]
         self.shift += self.speed
         self.shift %= 1
         

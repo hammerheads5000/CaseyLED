@@ -133,22 +133,22 @@ class StripPanel:
             self.pattern_select = ui.select(PATTERN_DICT, label='Pattern', on_change=self.update_pattern_ui, value=ser.OFF_CODE).classes('w-full')
             
             self.brightness_label = ui.label('Brightness:')
-            self.brightness = ui.slider(min=0, max=255, step = 1, value = 255, on_change=self.update)
+            self.brightness = ui.slider(min=0, max=255, step = 1, value = 255)
             
             self.color_label = ui.label('Color:')
-            self.color = ui.color_input(value="#DDAA88", preview=True, on_change=self.update)
+            self.color = ui.color_input(value="#DDAA88", preview=True)
 
             self.startcolor_label = ui.label('Start Color:')
-            self.startcolor = ui.color_input(value="#FFFFFF", preview=True, on_change=self.update)
+            self.startcolor = ui.color_input(value="#FFFFFF", preview=True)
             
             self.endcolor_label = ui.label('End Color:')
-            self.endcolor = ui.color_input(value="#0009B8", preview=True, on_change=self.update)
+            self.endcolor = ui.color_input(value="#0009B8", preview=True)
             
             self.speed_label = ui.label('Speed:')
-            self.speed = ui.slider(min=0, max=255, step = 1, value = 80, on_change=self.update)
+            self.speed = ui.slider(min=0, max=255, step = 1, value = 80)
             
-            # ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')
-            self.load_preset()
+            ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')
+            # self.load_preset()
             
     def update_preset_select(self):
         self.preset_select.set_options(list(presets.keys()))
@@ -175,7 +175,6 @@ class StripPanel:
             case ser.BREATHING_CODE:
                 self.show_color(True)
                 self.show_speed(True)
-        self.update()
                 
     def update(self):
         match self.pattern_select.value:
@@ -364,7 +363,7 @@ def root():
     
 def main():
     root()
-    ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(800, 800))
+    ui.run(title='CaseyLED Controller', dark=True, favicon='🌟')
 
 configs = get_config()
 presets = get_presets()

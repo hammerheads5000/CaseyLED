@@ -1,0 +1,3 @@
+failed top open /dev/ttyACM1
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
