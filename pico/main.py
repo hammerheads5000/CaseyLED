@@ -201,3 +201,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         rusb.terminateThread = True
         raise KeyboardInterrupt
+
