@@ -18,8 +18,50 @@ def get_config() -> list[dict]:
     with open('config.json') as f:
         return json.load(f)['Strips']
     
+def save_presets():
+    global presets
+    with open('presets.json', 'w') as f:
+        json.dump(presets, f, indent=4)
+
+    for i in range(len(strip_panels)):
+        strip_panels[i].update_preset_select()
+            
+def save_preset(name, preset):
+        
+    modified_panels = [panel.preset_modified() for panel in strip_panels]
+    presets[name] = preset
+    
+    for i in range(len(strip_panels)):
+        strip_panels[i].update_preset_select()
+        if not modified_panels[i]:
+            strip_panels[i].load_preset()
+    
+def get_presets() -> dict[str,dict]:
+    with open('presets.json') as f:
+        return json.load(f)
+    
+async def delete_preset(preset):
+    global presets
+    with ui.dialog() as delete_dialog, ui.card():
+        ui.label('Are you sure you want to delete this preset?')
+        ui.button('Delete', on_click=lambda: delete_dialog.submit('Yes'), color='red')
+        
+    result = await delete_dialog
+    if result is None:
+        return
+    
+    if preset == 'Default':
+        ui.notify("You can't delete the default preset")
+        return
+    if preset in presets.keys():
+        presets.pop(preset)
+    for panel in strip_panels:
+        if panel.preset_select.value == preset:
+            panel.apply_preset('Default')
+    save_presets()
+    
 def update_config():
-    global get_state, state, configs
+    global configs
     configs = get_config()
     root.refresh()
 
@@ -41,47 +83,22 @@ async def config_strip(strip_id: int, pin: int, name: str, length: int, reversed
     
     panel_states = []
     for panel in strip_panels:
-        panel_states.append({
-                'Pattern': panel.pattern_toggle.value,
-                'Brightness': panel.brightness.value,
-                'Color': panel.color.value,
-                'Start Color': panel.startcolor.value,
-                'End Color': panel.endcolor.value,
-                'Speed': panel.speed.value,
-                'Visible': panel.card.visible
-        })
+        panel_states.append(panel.get_state())
     
     ser.send_config(strip_id, reversed, pin, length)
     
     await root.refresh()
-    panel_states.append({
-            'Pattern': strip_panels[-1].pattern_toggle.value,
-            'Brightness': strip_panels[-1].brightness.value,
-            'Color': strip_panels[-1].color.value,
-            'Start Color': strip_panels[-1].startcolor.value,
-            'End Color': strip_panels[-1].endcolor.value,
-            'Speed': strip_panels[-1].speed.value,
-            'Visible': strip_panels[-1].card.visible
-    })
+    panel_states.append(strip_panels[-1].get_state())
     for strip_id in range(len(strip_panels)):
         strip_panels[strip_id].load_from_state(panel_states[strip_id])
         
+
 async def delete_strip(strip_id: int):
     global configs
     configs.pop(strip_id)
     save_config()
     
-    panel_states = []
-    for panel in strip_panels:
-        panel_states.append({
-                'Pattern': panel.pattern_toggle.value,
-                'Brightness': panel.brightness.value,
-                'Color': panel.color.value,
-                'Start Color': panel.startcolor.value,
-                'End Color': panel.endcolor.value,
-                'Speed': panel.speed.value,
-                'Visible': panel.card.visible
-        })
+    panel_states = [panel.get_state() for panel in strip_panels]
         
     panel_states.pop(strip_id)
     
@@ -94,7 +111,7 @@ async def delete_strip(strip_id: int):
     
 class StripPanel:
     def __init__(self, strip_id: int, pattern_displays: list[ui.card]):
-        global configs
+        global configs, presets
         self.name = configs[strip_id]['Name']
         self.current_pattern_classes = 'border border-gray-700 bg-none'
         self.strip_id = strip_id
@@ -108,7 +125,12 @@ class StripPanel:
                 ui.label(f"{self.name} Strip").classes('text-lg font-bold grow')
                 ui.button(icon='settings', on_click=lambda: self.config_dialog.open()).tooltip('Configure Strip').classes('justify-self-end')
                 
-            self.pattern_toggle = ui.toggle(PATTERN_DICT, on_change=self.update_pattern_ui, value=ser.OFF_CODE)
+            with ui.row().classes('w-full items-center'):
+                self.preset_select = ui.select(list(presets.keys()), label='Preset', value='Default', on_change=self.load_preset).classes('grow')
+                self.preset_save = ui.button(icon='save', on_click=self.save_preset_popup).tooltip('Save preset')
+                ui.button(icon='delete', on_click=lambda: delete_preset(self.preset_select.value), color='red').tooltip('Delete preset')
+
+            self.pattern_select = ui.select(PATTERN_DICT, label='Pattern', on_change=self.update_pattern_ui, value=ser.OFF_CODE).classes('w-full')
             
             self.brightness_label = ui.label('Brightness:')
             self.brightness = ui.slider(min=0, max=255, step = 1, value = 255, on_change=self.update)
@@ -125,14 +147,23 @@ class StripPanel:
             self.speed_label = ui.label('Speed:')
             self.speed = ui.slider(min=0, max=255, step = 1, value = 80, on_change=self.update)
             
-            # ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')      
+            # ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')
+            self.load_preset()
+            
+    def update_preset_select(self):
+        self.preset_select.set_options(list(presets.keys()))
+    
+    def apply_preset(self, preset_name):
+        self.update_preset_select()
+        self.preset_select.set_value(preset_name)
+        self.load_preset()
             
     def update_pattern_ui(self):
         self.show_brightness(True)
         self.show_color(False)
         self.show_gradient(False)
         self.show_speed(False)
-        match self.pattern_toggle.value:
+        match self.pattern_select.value:
             case ser.OFF_CODE:
                 self.show_brightness(False)
             case ser.RAINBOW_CODE:
@@ -147,7 +178,7 @@ class StripPanel:
         self.update()
                 
     def update(self):
-        match self.pattern_toggle.value:
+        match self.pattern_select.value:
             case ser.OFF_CODE:
                 ser.send_control_code(self.strip_id, ser.OFF_CODE)
                 self.pattern_display.classes(remove=self.current_pattern_classes, add='border border-gray-700 !bg-none')
@@ -195,7 +226,7 @@ class StripPanel:
         self.update_pattern_ui()
 
     def load_from_state(self, panel_state: dict):
-        self.pattern_toggle.set_value(panel_state['Pattern'])
+        self.pattern_select.set_value(panel_state['Pattern'])
         self.brightness.set_value(panel_state['Brightness'])
         self.color.set_value(panel_state['Color'])
         self.startcolor.set_value(panel_state['Start Color'])
@@ -203,6 +234,54 @@ class StripPanel:
         self.speed.set_value(panel_state['Speed'])
         self.set_visibility(panel_state['Visible'])
         self.update_pattern_ui()
+        self.update()
+        
+    def get_state(self):
+        return {
+                'Preset': self.preset_select.value,
+                'Pattern': self.pattern_select.value,
+                'Brightness': self.brightness.value,
+                'Color': self.color.value,
+                'Start Color': self.startcolor.value,
+                'End Color': self.endcolor.value,
+                'Speed': self.speed.value,
+                'Visible': self.card.visible
+        }
+        
+    def generate_preset(self):
+        return {
+            'Pattern': self.pattern_select.value,
+            'Brightness': self.brightness.value,
+            'Color': self.color.value,
+            'Start Color': self.startcolor.value,
+            'End Color': self.endcolor.value,
+            'Speed': self.speed.value
+        }
+        
+    async def save_preset_popup(self):
+        with ui.dialog() as dialog, ui.card():
+            ui.label('Save preset as:')
+            name_input = ui.input(label='Preset Name', value=self.preset_select.value or 'Default')
+            dialog.on('keydown.enter', lambda: dialog.submit(name_input.value))
+            ui.button(icon='save', on_click=lambda: dialog.submit(name_input.value))
+        
+        name = await dialog
+        
+        if name is not None:
+            save_preset(name, self.generate_preset())
+            self.apply_preset(name)
+        
+    def preset_modified(self):
+        return self.generate_preset() != presets[self.preset_select.value or 'Default']
+        
+    def load_preset(self):
+        preset = presets[self.preset_select.value or 'Default']
+        self.pattern_select.set_value(preset['Pattern'])
+        self.brightness.set_value(preset['Brightness'])
+        self.color.set_value(preset['Color'])
+        self.startcolor.set_value(preset['Start Color'])
+        self.endcolor.set_value(preset['End Color'])
+        self.speed.set_value(preset['Speed'])
         self.update()
 
 def config_popup(strip_id=-1) -> ui.dialog:
@@ -212,7 +291,7 @@ def config_popup(strip_id=-1) -> ui.dialog:
     async def _delete():
         with ui.dialog() as delete_dialog, ui.card():
             ui.label('Are you sure you want to delete this strip?')
-            ui.button('Delete Strip', on_click=lambda: delete_dialog.submit('Yes')).classes("!bg-red-700")
+            ui.button('Delete Strip', on_click=lambda: delete_dialog.submit('Yes'), color='red')
             
         result = await delete_dialog
         if result is not None:
@@ -225,17 +304,19 @@ def config_popup(strip_id=-1) -> ui.dialog:
         pin_input = ui.number(label='Pin', format='%d')
         length_input = ui.number(label='Length', format='%d')
         reversed_input = ui.checkbox('Reversed')
+        with ui.row():
+            ui.button('Configure strip', on_click=lambda: _config(strip_id, int(pin_input.value), name_input.value, int(length_input.value), reversed_input.value))
+            delete_button = ui.button(icon='delete_forever', on_click=_delete, color='red')
         if strip_id == -1:
             title.set_text('Add Strip')
             strip_id = len(configs)
+            delete_button.set_visibility(False)
         else:
             title.set_text('Configure Strip')
             pin_input.set_value(configs[strip_id]['Pin'])
             length_input.set_value(configs[strip_id]['Length'])
             name_input.set_value(configs[strip_id]['Name'])
             reversed_input.set_value(configs[strip_id]['Reversed'])
-        ui.button('Configure strip', on_click=lambda: _config(strip_id, int(pin_input.value), name_input.value, int(length_input.value), reversed_input.value))
-        ui.button('Delete strip', on_click=_delete).classes("!bg-red-700")
     return dialog
 
 def strip_selection_card(strip_id, strip_buttons: list[ui.button]) -> ui.card:
@@ -272,16 +353,21 @@ def root():
             for strip_id in range(len(configs)):
                 pattern_displays.append(strip_selection_card(strip_id, strip_buttons))
         ui.element().classes('grow')
-        with ui.column().classes('w-min justify-self-end'):
+        with ui.column().classes('w-80 justify-self-end'):
             for strip_id in range(len(configs)):
                 strip_panels.append(StripPanel(strip_id, pattern_displays))
                 strip_panels[-1].set_visibility(False)
+    for panel in strip_panels:
+        panel.update_preset_select()
+        if not panel.preset_modified():
+            panel.load_preset()
     
 def main():
     root()
     ui.run(title='CaseyLED Controller', native=True, dark=True, favicon='🌟', window_size=(800, 800))
 
 configs = get_config()
+presets = get_presets()
 current_patterns = [ser.OFF_CODE]*len(configs)
 strip_panels: list[StripPanel] = []
 
