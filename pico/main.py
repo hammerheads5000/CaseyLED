@@ -1,12 +1,12 @@
 import time
 from argb import *
-from machine import Pin, UART
+from machine import Pin, ADC
 import neopixel
 import rusb
 from _thread import start_new_thread
 import json
 
-UPDATE_FREQUENCY = 120 # hz
+UPDATE_FREQUENCY = 30 # hz
 
 JSON_CONFIG = 'config.json'
 
@@ -21,7 +21,7 @@ UPDATE_FREQ_CODE = 0b1101 # 1 byte for update frequency in hz
 OFF_CODE = 0b0000
 SOLID_CODE = 0b0001 # 3 bytes of color
 RAINBOW_CODE = 0b0010 # 1 byte for speed
-GRADIENT_CODE = 0b0011 # 3 bytes for color 1, 3 bytes for color 2
+GRADIENT_CODE = 0b0111 # 3 bytes for color 1, 3 bytes for color 2
 MOVING_PULSES_CODE = 0b0100 # 4 bits for # pulses, 4 bits for decay, 1 speed byte, 3 for color
 
 # Non-Destructive Control Codes
@@ -133,7 +133,7 @@ def apply_pattern(strips: list[LEDStrip], patterns: list[Pattern], pattern_codes
 #         pattern_codes[strip_id]['Data'].clear()
 #         print(strip_id, 'solid')
     elif control_code == RAINBOW_CODE:
-        patterns[strip_id] = RainbowPattern(led_count, data[0]*5/255/UPDATE_FREQUENCY, 2.0)
+        patterns[strip_id] = RainbowPattern(led_count, data[0]/255, 2)
         
 #         pattern_codes[strip_id]['Codes'].clear()
 #         pattern_codes[strip_id]['Data'].clear()
@@ -147,7 +147,7 @@ def apply_pattern(strips: list[LEDStrip], patterns: list[Pattern], pattern_codes
     elif control_code == BRIGHTNESS_CODE:
         patterns[strip_id].set_brightness(data[0]/255)
     elif control_code == BREATHING_CODE:
-        patterns[strip_id] = BreathingPattern(patterns[strip_id], data[0]*5/255/UPDATE_FREQUENCY)
+        patterns[strip_id] = BreathingPattern(patterns[strip_id], data[0]/255)
     
 #     pattern_codes[strip_id]['Codes'].append(control_code)
 #     pattern_codes[strip_id]['Data'].append(data)
@@ -194,7 +194,8 @@ def read_data(buffer0, timeout_ms = 100):
         data.append(int(buffer[0]))
 
     return strip_id, control_code, data
-
+BATTERY_PINS = [
+    ADC(p) for p in range(26,29)]
 def main():
     patterns = []
     strips = []
@@ -202,6 +203,8 @@ def main():
     loadJSON(strips, patterns, pattern_codes)
     
     while True:
+        print([bat.read_u16()>30500 for bat in BATTERY_PINS])
+            
         # get input
         check, buffer0 = check_input()
         if check:
@@ -219,7 +222,7 @@ def main():
         
         for i in range(len(patterns)):
             if isinstance(patterns[i], AnimatedPattern):
-                patterns[i].update()
+                patterns[i].update(time.ticks_ms()/1000 % 100)
                 strips[i].apply_pattern(patterns[i])
             strips[i].show()
         
@@ -232,5 +235,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         rusb.terminateThread = True
         raise KeyboardInterrupt
+
+
+
 
 

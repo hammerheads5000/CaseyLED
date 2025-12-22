@@ -53,7 +53,13 @@ def send_config(id: int, reversed: bool, pin: int, length: int):
     
 def send_control_code(id: int, code: int, data: (list[int] | int) = []):
     if isinstance(data, list):
+        for i in range(len(data)):
+            if data[i] == 3:
+                data[i] = 4
         _serial_port.write([0xFF, id << 4 | code] + data)
     else:
+        if data == 3:
+            data == 4
+
         _serial_port.write([0xFF, id << 4 | code, data])
     

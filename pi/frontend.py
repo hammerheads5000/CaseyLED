@@ -2,8 +2,18 @@ from nicegui import app, ui
 import nextmatch
 import serialcontrol as ser
 import json
+from pynput import keyboard
 
 PATTERN_DICT = {ser.OFF_CODE: 'Off', ser.RAINBOW_CODE: 'Rainbow', ser.SOLID_CODE: 'Solid', ser.GRADIENT_CODE: 'Gradient', ser.BREATHING_CODE: 'Breathing'}    
+
+def on_press(key):
+    print(key, 'pressed')
+    if key == keyboard.Key.f8:
+        apply_global_preset('Default')
+def on_release(key):
+    pass
+listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+listener.start()
 
 def hex_color_to_list(hex) -> list[int]:
     byte = int(hex[1:], 16)
@@ -60,6 +70,56 @@ async def delete_preset(preset):
             panel.apply_preset('Default')
     save_presets()
     
+def save_global_presets():
+    with open('global_presets.json', 'w') as f:
+        json.dump(global_presets, f, indent=4)
+            
+def save_global_preset(name):
+    preset = [
+        panel.generate_preset() for panel in strip_panels
+        ]
+    global_presets[name] = preset
+    global_preset_select.set_value(name)
+    
+def get_global_presets() -> dict[str,dict]:
+    with open('global_presets.json') as f:
+        return json.load(f)
+    
+async def delete_global_preset(preset):
+    global global_presets
+    with ui.dialog() as delete_dialog, ui.card():
+        ui.label('Are you sure you want to delete this preset?')
+        ui.button('Delete', on_click=lambda: delete_dialog.submit('Yes'), color='red')
+        
+    result = await delete_dialog
+    if result is None:
+        return
+    
+    if preset == 'Default':
+        ui.notify("You can't delete the default preset")
+        return
+    if preset in global_presets.keys():
+        global_presets.pop(preset)
+    save_global_presets()
+    
+def apply_global_preset(name):
+    for i in range(min(len(strip_panels),len(global_presets[name]))):
+        strip_panels[i].apply_preset(global_presets[name][i])
+        strip_panels[i].update()
+    
+async def save_global_preset_popup():
+    with ui.dialog() as dialog, ui.card():
+        ui.label('Save preset as:')
+        name_input = ui.input(label='Preset Name', value=global_preset_select.value or 'Default')
+        dialog.on('keydown.enter', lambda: dialog.submit(name_input.value))
+        ui.button(icon='save', on_click=lambda: dialog.submit(name_input.value))
+    
+    name = await dialog
+    
+    if name is not None:
+        save_global_preset(name)
+    save_global_presets()
+
 def update_config():
     global configs
     configs = get_config()
@@ -145,7 +205,7 @@ class StripPanel:
             self.endcolor = ui.color_input(value="#0009B8", preview=True)
             
             self.speed_label = ui.label('Speed:')
-            self.speed = ui.slider(min=0, max=255, step = 1, value = 80)
+            self.speed = ui.slider(min=1, max=255, step = 1, value = 80)
             
             ui.button('Update', on_click=self.update).tooltip('Apply pattern to strip')
             # self.load_preset()
@@ -183,7 +243,7 @@ class StripPanel:
                 self.pattern_display.classes(remove=self.current_pattern_classes, add='border border-gray-700 !bg-none')
                 self.current_pattern_classes = 'border border-gray-700 !bg-none'
             case ser.RAINBOW_CODE:
-                ser.send_control_code(self.strip_id, ser.RAINBOW_CODE)
+                ser.send_control_code(self.strip_id, ser.RAINBOW_CODE, self.speed.value)
                 self.pattern_display.classes(remove=self.current_pattern_classes, add='border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700')
                 self.current_pattern_classes = 'border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700'
             case ser.SOLID_CODE:
@@ -275,6 +335,9 @@ class StripPanel:
         
     def load_preset(self):
         preset = presets[self.preset_select.value or 'Default']
+        self.apply_preset(preset)
+        
+    def apply_preset(self, preset):
         self.pattern_select.set_value(preset['Pattern'])
         self.brightness.set_value(preset['Brightness'])
         self.color.set_value(preset['Color'])
@@ -340,8 +403,11 @@ def select_strip(strip_id: int, strip_buttons: list[ui.button]):
     
 @ui.refreshable
 def root():
-    global strip_panels
+    global strip_panels, global_preset_select, global_presets
     with ui.row():
+        global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(e.value)).classes('grow')
+        global_preset_save = ui.button(icon='save', on_click=save_global_preset_popup).tooltip('Save global preset')
+        ui.button(icon='delete', on_click=lambda: delete_global_preset(global_preset_select.value), color='red').tooltip('Delete preset')
         ui.button('Add Strip +', on_click=config_popup)
         ui.button(icon='refresh', on_click=update_config).tooltip('Refresh Configuration from config.json')
     strip_buttons: list[ui.button] = []
@@ -363,10 +429,11 @@ def root():
     
 def main():
     root()
-    ui.run(title='CaseyLED Controller', dark=True, favicon='🌟')
+    ui.run(title='CaseyLEDs', dark=True, favicon='🌟')
 
 configs = get_config()
 presets = get_presets()
+global_presets = get_global_presets()
 current_patterns = [ser.OFF_CODE]*len(configs)
 strip_panels: list[StripPanel] = []
 

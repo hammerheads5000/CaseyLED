@@ -1,0 +1,86 @@
+{
+    "Default": [
+        {
+            "Pattern": 0,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        },
+        {
+            "Pattern": 0,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        },
+        {
+            "Pattern": 0,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        },
+        {
+            "Pattern": 0,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        },
+        {
+            "Pattern": 0,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        }
+    ],
+    "1": [
+        {
+            "Pattern": 1,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        },
+        {
+            "Pattern": 0,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        },
+        {
+            "Pattern": 0,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        },
+        {
+            "Pattern": 0,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        },
+        {
+            "Pattern": 7,
+            "Brightness": 255,
+            "Color": "#DDAA88",
+            "Start Color": "#FFFFFF",
+            "End Color": "#0009B8",
+            "Speed": 80
+        }
+    ]
+}

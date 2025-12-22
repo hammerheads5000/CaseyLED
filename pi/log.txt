@@ -1,3 +1,1688 @@
 failed top open /dev/ttyACM1
 failed top open /dev/ttyACM1
 NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 427, in <module>
+    main()
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 418, in main
+    root()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/functions/refreshable.py", line 93, in __call__
+    return target.run(self.func)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/functions/refreshable.py", line 51, in run
+    return func(*self.args, **self.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 395, in root
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                          ^^^^^^^^^^^^^^
+NameError: name 'global_presets' is not defined. Did you mean: 'global_preset_save'?
+failed top open /dev/ttyACM1
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 423, in <module>
+    global_presets = get_global_presets()
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 74, in get_global_presets
+    with open('global_presets.json') as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'global_presets.json'
+failed top open /dev/ttyACM1
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 428, in <module>
+    main()
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 418, in main
+    root()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/functions/refreshable.py", line 93, in __call__
+    return target.run(self.func)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/functions/refreshable.py", line 51, in run
+    return func(*self.args, **self.kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 395, in root
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/elements/select.py", line 64, in __init__
+    super().__init__(label=label, options=options, value=value, on_change=on_change, validation=validation)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/elements/mixins/label_element.py", line 14, in __init__
+    super().__init__(**kwargs)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/elements/mixins/validation_element.py", line 19, in __init__
+    super().__init__(**kwargs)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/elements/choice_element.py", line 20, in __init__
+    raise ValueError(f'Invalid value: {value}')
+ValueError: Invalid value: Default
+failed top open /dev/ttyACM1
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+save_global_preset() missing 1 required positional argument: 'name'
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 448, in wait_for_result
+    await result
+  File "frontend.py", line 108, in save_global_preset_popup
+    save_global_preset()
+TypeError: save_global_preset() missing 1 required positional argument: 'name'
+save_global_preset() missing 1 required positional argument: 'name'
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 448, in wait_for_result
+    await result
+  File "frontend.py", line 108, in save_global_preset_popup
+    save_global_preset()
+TypeError: save_global_preset() missing 1 required positional argument: 'name'
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+name 'preset_name' is not defined
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 397, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                                                                                                                                  ^^^^^^^^^^^
+NameError: name 'preset_name' is not defined
+name 'preset_name' is not defined
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 397, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                                                                                                                                  ^^^^^^^^^^^
+NameError: name 'preset_name' is not defined
+name 'preset_name' is not defined
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 397, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                                                                                                                                  ^^^^^^^^^^^
+NameError: name 'preset_name' is not defined
+name 'preset_name' is not defined
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 397, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                                                                                                                                  ^^^^^^^^^^^
+NameError: name 'preset_name' is not defined
+name 'preset_name' is not defined
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 397, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                                                                                                                                  ^^^^^^^^^^^
+NameError: name 'preset_name' is not defined
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+name 'preset_name' is not defined
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 398, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                                                                                                                                  ^^^^^^^^^^^
+NameError: name 'preset_name' is not defined
+name 'preset_name' is not defined
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 398, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                                                                                                                                  ^^^^^^^^^^^
+NameError: name 'preset_name' is not defined
+name 'preset_name' is not defined
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 398, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(preset_name)).classes('grow')
+                                                                                                                                                  ^^^^^^^^^^^
+NameError: name 'preset_name' is not defined
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+len() takes exactly one argument (2 given)
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 398, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(e.value)).classes('grow')
+                                                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 96, in apply_global_preset
+    for i in range(min(len(strip_panels,len(global_presets)))):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: len() takes exactly one argument (2 given)
+len() takes exactly one argument (2 given)
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/nicegui/events.py", line 440, in handle_event
+    result = cast(Callable[[EventT], Any], handler)(arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 398, in <lambda>
+    global_preset_select = ui.select(list(global_presets.keys()), label='Global Preset', value='Default', on_change=lambda e: apply_global_preset(e.value)).classes('grow')
+                                                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "frontend.py", line 96, in apply_global_preset
+    for i in range(min(len(strip_panels,len(global_presets)))):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: len() takes exactly one argument (2 given)
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+WARNING:  WatchFiles detected changes in '.venv/lib/python3.12/site-packages/keyboard/_keyboard_event.py', '.venv/lib/python3.12/site-packages/keyboard/mouse.py', '.venv/lib/python3.12/site-packages/keyboard/_winmouse.py', '.venv/lib/python3.12/site-packages/keyboard/_canonical_names.py', '.venv/lib/python3.12/site-packages/keyboard/_nixcommon.py', '.venv/lib/python3.12/site-packages/keyboard/__main__.py', '.venv/lib/python3.12/site-packages/keyboard/_generic.py', '.venv/lib/python3.12/site-packages/keyboard/__init__.py', '.venv/lib/python3.12/site-packages/keyboard/_darwinmouse.py', '.venv/lib/python3.12/site-packages/keyboard/_keyboard_tests.py', '.venv/lib/python3.12/site-packages/keyboard/_mouse_tests.py', '.venv/lib/python3.12/site-packages/keyboard/_nixkeyboard.py', '.venv/lib/python3.12/site-packages/keyboard/_winkeyboard.py', '.venv/lib/python3.12/site-packages/keyboard/_nixmouse.py', '.venv/lib/python3.12/site-packages/keyboard/_mouse_event.py', '.venv/lib/python3.12/site-packages/keyboard/_darwinkeyboard.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 9, in <module>
+    keyboard.add_hotkey('F8', lambda: apply_global_preset('Default'))
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/__init__.py", line 639, in add_hotkey
+    _listener.start_if_necessary()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/_generic.py", line 35, in start_if_necessary
+    self.init()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/__init__.py", line 196, in init
+    _os_keyboard.init()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/_nixkeyboard.py", line 113, in init
+    build_device()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/_nixkeyboard.py", line 109, in build_device
+    ensure_root()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/_nixcommon.py", line 174, in ensure_root
+    raise ImportError('You must be root to use this library on linux.')
+ImportError: You must be root to use this library on linux.
+failed top open /dev/ttyACM1
+WARNING:  WatchFiles detected changes in '.venv/lib/python3.12/site-packages/six.py'. Reloading...
+WARNING:  WatchFiles detected changes in '.venv/lib/python3.12/site-packages/evdev/genecodes_py.py', '.venv/lib/python3.12/site-packages/evdev/evtest.py', '.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py', '.venv/lib/python3.12/site-packages/pynput/mouse/_xorg.py', '.venv/lib/python3.12/site-packages/Xlib/ext/xtest.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/special.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/katakana.py', '.venv/lib/python3.12/site-packages/pynput/_util/__init__.py', '.venv/lib/python3.12/site-packages/Xlib/ext/screensaver.py', '.venv/lib/python3.12/site-packages/Xlib/error.py', '.venv/lib/python3.12/site-packages/Xlib/ext/composite.py', '.venv/lib/python3.12/site-packages/Xlib/xobject/icccm.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/thai.py', '.venv/lib/python3.12/site-packages/Xlib/Xatom.py', '.venv/lib/python3.12/site-packages/evdev/__init__.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/hebrew.py', '.venv/lib/python3.12/site-packages/pynput/_util/darwin_vks.py', '.venv/lib/python3.12/site-packages/Xlib/ext/nvcontrol.py', '.venv/lib/python3.12/site-packages/pynput/_util/xorg_keysyms.py', '.venv/lib/python3.12/site-packages/evdev/ecodes.py', '.venv/lib/python3.12/site-packages/Xlib/support/__init__.py', '.venv/lib/python3.12/site-packages/Xlib/XK.py', '.venv/lib/python3.12/site-packages/Xlib/support/unix_connect.py', '.venv/lib/python3.12/site-packages/Xlib/xobject/resource.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/technical.py', '.venv/lib/python3.12/site-packages/Xlib/ext/shape.py', '.venv/lib/python3.12/site-packages/Xlib/ext/damage.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/latin3.py', '.venv/lib/python3.12/site-packages/pynput/mouse/_dummy.py', '.venv/lib/python3.12/site-packages/Xlib/xobject/cursor.py', '.venv/lib/python3.12/site-packages/Xlib/Xcursorfont.py', '.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py', '.venv/lib/python3.12/site-packages/evdev/genecodes_c.py', '.venv/lib/python3.12/site-packages/Xlib/ext/ge.py', '.venv/lib/python3.12/site-packages/Xlib/rdb.py', '.venv/lib/python3.12/site-packages/pynput/_util/win32.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/apl.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/cyrillic.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/publishing.py', '.venv/lib/python3.12/site-packages/Xlib/protocol/rq.py', '.venv/lib/python3.12/site-packages/Xlib/ext/res.py', '.venv/lib/python3.12/site-packages/Xlib/protocol/request.py', '.venv/lib/python3.12/site-packages/pynput/keyboard/_win32.py', '.venv/lib/python3.12/site-packages/Xlib/xauth.py', '.venv/lib/python3.12/site-packages/Xlib/threaded.py', '.venv/lib/python3.12/site-packages/Xlib/xobject/__init__.py', '.venv/lib/python3.12/site-packages/evdev/ecodes_runtime.py', '.venv/lib/python3.12/site-packages/evdev/events.py', '.venv/lib/python3.12/site-packages/Xlib/protocol/structs.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/latin2.py', '.venv/lib/python3.12/site-packages/pynput/__init__.py', '.venv/lib/python3.12/site-packages/evdev/eventio_async.py', '.venv/lib/python3.12/site-packages/Xlib/support/vms_connect.py', '.venv/lib/python3.12/site-packages/evdev/util.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/miscellany.py', '.venv/lib/python3.12/site-packages/Xlib/xobject/fontable.py', '.venv/lib/python3.12/site-packages/pynput/_util/win32_vks.py', '.venv/lib/python3.12/site-packages/pynput/mouse/_win32.py', '.venv/lib/python3.12/site-packages/Xlib/X.py', '.venv/lib/python3.12/site-packages/pynput/keyboard/_uinput.py', '.venv/lib/python3.12/site-packages/pynput/mouse/_darwin.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/greek.py', '.venv/lib/python3.12/site-packages/Xlib/ext/dpms.py', '.venv/lib/python3.12/site-packages/Xlib/Xutil.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/latin1.py', '.venv/lib/python3.12/site-packages/Xlib/ext/record.py', '.venv/lib/python3.12/site-packages/pynput/_util/xorg.py', '.venv/lib/python3.12/site-packages/Xlib/ext/xfixes.py', '.venv/lib/python3.12/site-packages/evdev/eventio.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/arabic.py', '.venv/lib/python3.12/site-packages/pynput/keyboard/_base.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/xkb.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/__init__.py', '.venv/lib/python3.12/site-packages/pynput/mouse/__init__.py', '.venv/lib/python3.12/site-packages/pynput/_util/uinput.py', '.venv/lib/python3.12/site-packages/Xlib/ext/xinerama.py', '.venv/lib/python3.12/site-packages/Xlib/ext/randr.py', '.venv/lib/python3.12/site-packages/Xlib/protocol/__init__.py', '.venv/lib/python3.12/site-packages/pynput/keyboard/_dummy.py', '.venv/lib/python3.12/site-packages/Xlib/xobject/drawable.py', '.venv/lib/python3.12/site-packages/Xlib/support/lock.py', '.venv/lib/python3.12/site-packages/evdev/device.py', '.venv/lib/python3.12/site-packages/Xlib/xobject/colormap.py', '.venv/lib/python3.12/site-packages/pynput/keyboard/_darwin.py', '.venv/lib/python3.12/site-packages/pynput/_util/darwin.py', '.venv/lib/python3.12/site-packages/pynput/mouse/_base.py', '.venv/lib/python3.12/site-packages/Xlib/ext/security.py', '.venv/lib/python3.12/site-packages/Xlib/support/connect.py', '.venv/lib/python3.12/site-packages/Xlib/protocol/event.py', '.venv/lib/python3.12/site-packages/Xlib/display.py', '.venv/lib/python3.12/site-packages/pynput/_info.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/xf86.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/xk3270.py', '.venv/lib/python3.12/site-packages/Xlib/ext/xinput.py', '.venv/lib/python3.12/site-packages/Xlib/protocol/display.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/korean.py', '.venv/lib/python3.12/site-packages/evdev/uinput.py', '.venv/lib/python3.12/site-packages/evdev/ff.py', '.venv/lib/python3.12/site-packages/Xlib/__init__.py', '.venv/lib/python3.12/site-packages/Xlib/keysymdef/latin4.py', '.venv/lib/python3.12/site-packages/Xlib/ext/__init__.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 9, in <module>
+    keyboard.add_hotkey('F8', lambda: apply_global_preset('Default'))
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/__init__.py", line 639, in add_hotkey
+    _listener.start_if_necessary()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/_generic.py", line 35, in start_if_necessary
+    self.init()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/__init__.py", line 196, in init
+    _os_keyboard.init()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/_nixkeyboard.py", line 113, in init
+    build_device()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/_nixkeyboard.py", line 109, in build_device
+    ensure_root()
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/keyboard/_nixcommon.py", line 174, in ensure_root
+    raise ImportError('You must be root to use this library on linux.')
+ImportError: You must be root to use this library on linux.
+failed top open /dev/ttyACM1
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 9, in <module>
+    hotkeys = keyboard.GlobalHotKeys({'F8': lambda: apply_global_preset('Default')})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 219, in __init__
+    HotKey(HotKey.parse(key), value)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 171, in parse
+    parse(s)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 166, in parse
+    raise ValueError(s)
+ValueError: F8
+failed top open /dev/ttyACM1
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 9, in <module>
+    hotkeys = keyboard.GlobalHotKeys({keyboard.Key.f8: lambda: apply_global_preset('Default')})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 219, in __init__
+    HotKey(HotKey.parse(key), value)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 169, in parse
+    raw_parts = list(parts())
+                ^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 138, in parts
+    for i, c in enumerate(keys):
+                ^^^^^^^^^^^^^^^
+TypeError: 'Key' object is not iterable
+failed top open /dev/ttyACM1
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 9, in <module>
+    hotkeys = keyboard.GlobalHotKeys({'f8': lambda: apply_global_preset('Default')})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 219, in __init__
+    HotKey(HotKey.parse(key), value)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 171, in parse
+    parse(s)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/__init__.py", line 166, in parse
+    raise ValueError(s)
+ValueError: f8
+failed top open /dev/ttyACM1
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 230, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/xorg.py", line 472, in _handler
+    self._handle_message(self._display_stop, event, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle_message
+    self.on_press(key, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 146, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 291, in <lambda>
+    return lambda *a: f(*a[:actual])
+                      ^^^^^^^^^^^^^^
+  File "frontend.py", line 10, in on_press
+    if key == keyboard.key.f8:
+              ^^^^^^^^^^^^
+AttributeError: module 'pynput.keyboard' has no attribute 'key'. Did you mean: 'Key'?
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 230, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/xorg.py", line 472, in _handler
+    self._handle_message(self._display_stop, event, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle_message
+    self.on_press(key, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 146, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 291, in <lambda>
+    return lambda *a: f(*a[:actual])
+                      ^^^^^^^^^^^^^^
+  File "frontend.py", line 10, in on_press
+    if key == keyboard.key.f8:
+              ^^^^^^^^^^^^
+AttributeError: module 'pynput.keyboard' has no attribute 'key'. Did you mean: 'Key'?
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 230, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/xorg.py", line 472, in _handler
+    self._handle_message(self._display_stop, event, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle_message
+    self.on_press(key, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 146, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 291, in <lambda>
+    return lambda *a: f(*a[:actual])
+                      ^^^^^^^^^^^^^^
+  File "frontend.py", line 10, in on_press
+    if key == keyboard.key.f8:
+              ^^^^^^^^^^^^
+AttributeError: module 'pynput.keyboard' has no attribute 'key'. Did you mean: 'Key'?
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 230, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/xorg.py", line 472, in _handler
+    self._handle_message(self._display_stop, event, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle_message
+    self.on_press(key, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 146, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 291, in <lambda>
+    return lambda *a: f(*a[:actual])
+                      ^^^^^^^^^^^^^^
+  File "frontend.py", line 10, in on_press
+    if key == keyboard.key.f8:
+              ^^^^^^^^^^^^
+AttributeError: module 'pynput.keyboard' has no attribute 'key'. Did you mean: 'Key'?
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 230, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/xorg.py", line 472, in _handler
+    self._handle_message(self._display_stop, event, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle_message
+    self.on_press(key, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 146, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 291, in <lambda>
+    return lambda *a: f(*a[:actual])
+                      ^^^^^^^^^^^^^^
+  File "frontend.py", line 10, in on_press
+    if key == keyboard.key.f8:
+              ^^^^^^^^^^^^
+AttributeError: module 'pynput.keyboard' has no attribute 'key'. Did you mean: 'Key'?
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 230, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/xorg.py", line 472, in _handler
+    self._handle_message(self._display_stop, event, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle_message
+    self.on_press(key, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 146, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 291, in <lambda>
+    return lambda *a: f(*a[:actual])
+                      ^^^^^^^^^^^^^^
+  File "frontend.py", line 10, in on_press
+    if key == keyboard.key.f8:
+              ^^^^^^^^^^^^
+AttributeError: module 'pynput.keyboard' has no attribute 'key'. Did you mean: 'Key'?
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 230, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/xorg.py", line 472, in _handler
+    self._handle_message(self._display_stop, event, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle_message
+    self.on_press(key, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 146, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 291, in <lambda>
+    return lambda *a: f(*a[:actual])
+                      ^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 10, in on_press
+    if key == keyboard.key.f8:
+              ^^^^^^^^^^^^
+AttributeError: module 'pynput.keyboard' has no attribute 'key'. Did you mean: 'Key'?
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 230, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/xorg.py", line 472, in _handler
+    self._handle_message(self._display_stop, event, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/keyboard/_xorg.py", line 578, in _handle_message
+    self.on_press(key, injected)
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 146, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "/home/hammerheads/CaseyLED/pi/.venv/lib/python3.12/site-packages/pynput/_util/__init__.py", line 291, in <lambda>
+    return lambda *a: f(*a[:actual])
+                      ^^^^^^^^^^^^^^
+  File "frontend.py", line 10, in on_press
+    if key == keyboard.key.f8:
+              ^^^^^^^^^^^^
+AttributeError: module 'pynput.keyboard' has no attribute 'key'. Did you mean: 'Key'?
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 285, in run_path
+  File "<frozen runpy>", line 259, in _get_code_from_file
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 13
+    listener = keyboard.Listener(on_press=on_press, on_release=lambda:pass)
+                                                                      ^^^^
+SyntaxError: invalid syntax
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 285, in run_path
+  File "<frozen runpy>", line 259, in _get_code_from_file
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 13
+    listener = keyboard.Listener(on_press=on_press, on_release=lambda:pass)
+                                                                      ^^^^
+SyntaxError: invalid syntax
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 131, in _main
+    prepare(preparation_data)
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 246, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 297, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 285, in run_path
+  File "<frozen runpy>", line 259, in _get_code_from_file
+  File "/home/hammerheads/CaseyLED/pi/frontend.py", line 16
+    listener.start(
+                  ^
+SyntaxError: '(' was never closed
+WARNING:  WatchFiles detected changes in 'frontend.py'. Reloading...
+failed top open /dev/ttyACM1
+NiceGUI ready to go on http://localhost:8080, and http://10.0.0.18:8080
+Key.f8 pressed
+Key.f8 pressed
+Key.shift pressed
+Key.shift pressed
+'B' pressed
+'B' pressed
+'A' pressed
+'A' pressed
+'T' pressed
+'T' pressed
+'T' pressed
+'T' pressed
+'E' pressed
+'E' pressed
+'R' pressed
+'R' pressed
+'Y' pressed
+'Y' pressed
+'_' pressed
+'_' pressed
+'I' pressed
+'I' pressed
+Key.backspace pressed
+Key.backspace pressed
+'P' pressed
+'P' pressed
+'I' pressed
+'I' pressed
+'N' pressed
+'N' pressed
+'S' pressed
+'S' pressed
+Key.space pressed
+Key.space pressed
+'=' pressed
+'=' pressed
+Key.space pressed
+Key.space pressed
+'[' pressed
+'[' pressed
+Key.enter pressed
+Key.enter pressed
+Key.shift pressed
+Key.shift pressed
+'P' pressed
+'P' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.shift pressed
+Key.shift pressed
+'P' pressed
+'P' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.shift pressed
+Key.shift pressed
+'P' pressed
+'P' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+'.' pressed
+'.' pressed
+'b' pressed
+'b' pressed
+'o' pressed
+'o' pressed
+'a' pressed
+'a' pressed
+'r' pressed
+'r' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+'p' pressed
+'p' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+Key.space pressed
+Key.space pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.space pressed
+Key.space pressed
+Key.backspace pressed
+Key.backspace pressed
+',' pressed
+',' pressed
+Key.space pressed
+Key.space pressed
+Key.shift pressed
+Key.shift pressed
+'P' pressed
+'P' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+'.' pressed
+'.' pressed
+Key.shift pressed
+Key.shift pressed
+'O' pressed
+'O' pressed
+'U' pressed
+'U' pressed
+'T' pressed
+'T' pressed
+')' pressed
+')' pressed
+Key.space pressed
+Key.space pressed
+'f' pressed
+'f' pressed
+'o' pressed
+'o' pressed
+'r' pressed
+'r' pressed
+Key.space pressed
+Key.space pressed
+'p' pressed
+'p' pressed
+Key.space pressed
+Key.space pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+Key.space pressed
+Key.space pressed
+'[' pressed
+'[' pressed
+'1' pressed
+'1' pressed
+'6' pressed
+'6' pressed
+',' pressed
+',' pressed
+Key.space pressed
+Key.space pressed
+'1' pressed
+'1' pressed
+'7' pressed
+'7' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'1' pressed
+'1' pressed
+'7' pressed
+'7' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'r' pressed
+'r' pressed
+'a' pressed
+'a' pressed
+'n' pressed
+'n' pressed
+'g' pressed
+'g' pressed
+'e' pressed
+'e' pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+'1' pressed
+'1' pressed
+'6' pressed
+'6' pressed
+',' pressed
+',' pressed
+'2' pressed
+'2' pressed
+'9' pressed
+'9' pressed
+Key.shift pressed
+Key.shift pressed
+')' pressed
+')' pressed
+']' pressed
+']' pressed
+Key.enter pressed
+Key.enter pressed
+Key.shift pressed
+Key.shift pressed
+'I' pressed
+'I' pressed
+'N' pressed
+'N' pressed
+'P' pressed
+'P' pressed
+'U' pressed
+'U' pressed
+'T' pressed
+'T' pressed
+Key.shift pressed
+Key.shift pressed
+'A' pressed
+'A' pressed
+'N' pressed
+'N' pressed
+'A' pressed
+'A' pressed
+'L' pressed
+'L' pressed
+'O' pressed
+'O' pressed
+'G' pressed
+'G' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.shift pressed
+Key.shift pressed
+'A' pressed
+'A' pressed
+'D' pressed
+'D' pressed
+'C' pressed
+'C' pressed
+Key.shift pressed
+Key.shift pressed
+'A' pressed
+'A' pressed
+'D' pressed
+'D' pressed
+'C' pressed
+'C' pressed
+'(' pressed
+'(' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.right pressed
+Key.right pressed
+Key.shift pressed
+Key.shift pressed
+')' pressed
+')' pressed
+'f' pressed
+'f' pressed
+'o' pressed
+'o' pressed
+'r' pressed
+'r' pressed
+Key.space pressed
+Key.space pressed
+'b' pressed
+'b' pressed
+'a' pressed
+'a' pressed
+'t' pressed
+'t' pressed
+Key.space pressed
+Key.space pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+Key.space pressed
+Key.space pressed
+Key.shift pressed
+Key.shift pressed
+'B' pressed
+'B' pressed
+'A' pressed
+'A' pressed
+'T' pressed
+'T' pressed
+'T' pressed
+'T' pressed
+'E' pressed
+'E' pressed
+'R' pressed
+'R' pressed
+'Y' pressed
+'Y' pressed
+'_' pressed
+'_' pressed
+'P' pressed
+'P' pressed
+'O' pressed
+'O' pressed
+'I' pressed
+'I' pressed
+'N' pressed
+'N' pressed
+'S' pressed
+'S' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'I' pressed
+'I' pressed
+'N' pressed
+'N' pressed
+'S' pressed
+'S' pressed
+':' pressed
+':' pressed
+Key.enter pressed
+Key.enter pressed
+'p' pressed
+'p' pressed
+'r' pressed
+'r' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+'t' pressed
+'t' pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.up pressed
+Key.up pressed
+Key.up pressed
+Key.up pressed
+Key.down pressed
+Key.down pressed
+Key.up pressed
+Key.up pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.enter pressed
+Key.enter pressed
+'s' pressed
+'s' pressed
+'t' pressed
+'t' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'p' pressed
+'p' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+'s' pressed
+'s' pressed
+Key.space pressed
+Key.space pressed
+'=' pressed
+'=' pressed
+Key.space pressed
+Key.space pressed
+'[' pressed
+'[' pressed
+']' pressed
+']' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.down pressed
+Key.down pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+Key.left pressed
+'b' pressed
+'b' pressed
+'a' pressed
+'a' pressed
+'t' pressed
+'t' pressed
+'.' pressed
+'.' pressed
+'r' pressed
+'r' pressed
+'e' pressed
+'e' pressed
+'a' pressed
+'a' pressed
+'d' pressed
+'d' pressed
+Key.shift pressed
+Key.shift pressed
+'I' pressed
+'I' pressed
+Key.backspace pressed
+Key.backspace pressed
+'_' pressed
+'_' pressed
+'u' pressed
+'u' pressed
+'1' pressed
+'1' pressed
+'6' pressed
+'6' pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+')' pressed
+')' pressed
+Key.space pressed
+Key.space pressed
+Key.backspace pressed
+Key.backspace pressed
+'[' pressed
+'[' pressed
+']' pressed
+']' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+']' pressed
+']' pressed
+'p' pressed
+'p' pressed
+'r' pressed
+'r' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+'t' pressed
+'t' pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+'[' pressed
+'[' pressed
+Key.shift pressed
+Key.shift pressed
+')' pressed
+')' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'a' pressed
+'a' pressed
+'c' pressed
+'c' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'c' pressed
+'c' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'a' pressed
+'a' pressed
+'v' pressed
+'v' pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'a' pressed
+'a' pressed
+'c' pressed
+'c' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'a' pressed
+'a' pressed
+'v' pressed
+'v' pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'p' pressed
+'p' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+'s' pressed
+Key.ctrl pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'d' pressed
+'d' pressed
+'d' pressed
+'d' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'2' pressed
+'2' pressed
+'7' pressed
+'7' pressed
+Key.backspace pressed
+Key.backspace pressed
+'6' pressed
+'6' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'d' pressed
+'d' pressed
+'d' pressed
+'d' pressed
+Key.shift pressed
+Key.shift pressed
+'>' pressed
+'>' pressed
+'3' pressed
+'3' pressed
+'0' pressed
+'0' pressed
+'5' pressed
+'5' pressed
+'0' pressed
+'0' pressed
+'0' pressed
+'0' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'c' pressed
+'c' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'s' pressed
+'s' pressed
+'3' pressed
+'3' pressed
+'3' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'e' pressed
+'e' pressed
+'e' pressed
+'w' pressed
+'w' pressed
+'w' pressed
+'p' pressed
+'p' pressed
+'p' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'s' pressed
+'s' pressed
+'s' pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'3' pressed
+'3' pressed
+'3' pressed
+'2' pressed
+'2' pressed
+'2' pressed
+'a' pressed
+'a' pressed
+'a' pressed
+'d' pressed
+'d' pressed
+'d' pressed
+'a' pressed
+'a' pressed
+'a' pressed
+'f' pressed
+'f' pressed
+'f' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'u' pressed
+'u' pressed
+'u' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+Key.space pressed
+Key.space pressed
+Key.space pressed
+'e' pressed
+'e' pressed
+'e' pressed
+'s' pressed
+'s' pressed
+'s' pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'3' pressed
+'3' pressed
+'3' pressed
+'2' pressed
+'2' pressed
+'2' pressed
+Key.enter pressed
+Key.enter pressed
+Key.enter pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.delete pressed
+Key.delete pressed
+Key.delete pressed
+Key.enter pressed
+Key.enter pressed
+Key.enter pressed
+'a' pressed
+'a' pressed
+'a' pressed
+'d' pressed
+'d' pressed
+'d' pressed
+'a' pressed
+'a' pressed
+'a' pressed
+'f' pressed
+'f' pressed
+'f' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'u' pressed
+'u' pressed
+'u' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+Key.enter pressed
+Key.enter pressed
+Key.enter pressed
+'e' pressed
+'e' pressed
+'e' pressed
+'s' pressed
+'s' pressed
+'s' pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'3' pressed
+'3' pressed
+'3' pressed
+'2' pressed
+'2' pressed
+'2' pressed
+Key.enter pressed
+Key.enter pressed
+Key.enter pressed
+'a' pressed
+'a' pressed
+'a' pressed
+'a' pressed
+'d' pressed
+'d' pressed
+'d' pressed
+'d' pressed
+'a' pressed
+'a' pressed
+'a' pressed
+'a' pressed
+'f' pressed
+'f' pressed
+'f' pressed
+'f' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'u' pressed
+'u' pressed
+'u' pressed
+'u' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+Key.tab pressed
+Key.tab pressed
+Key.tab pressed
+Key.tab pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+'l' pressed
+'l' pressed
+'l' pressed
+'l' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+'(' pressed
+'(' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'l' pressed
+'l' pressed
+'l' pressed
+'l' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+'(' pressed
+'(' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+'(' pressed
+'(' pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+Key.backspace pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'p' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'r' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+'t' pressed
+'l' pressed
+'l' pressed
+'l' pressed
+'l' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+'n' pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+'(' pressed
+'(' pressed
+'(' pressed
+'(' pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+'"' pressed
+'"' pressed
+'"' pressed
+'"' pressed
+'h' pressed
+'h' pressed
+'h' pressed
+'h' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+'i' pressed
+Key.up pressed
+Key.up pressed
+Key.up pressed
+Key.up pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.down pressed
+Key.down pressed
+Key.down pressed
+Key.down pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+Key.right pressed
+';' pressed
+';' pressed
+';' pressed
+';' pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+Key.ctrl pressed
+'c' pressed
+'c' pressed
+'c' pressed
+'c' pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+Key.shift pressed
+Key.backspace pressed
+ÿÿÿÿÿ        & 

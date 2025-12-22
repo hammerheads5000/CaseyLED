@@ -127,21 +127,22 @@ class AnimatedPattern(Pattern):
     def __init__(self, pattern: Pattern):
         super().__init__(pattern.start, pattern.buffer_view)
         
-    def update(self):
+    def update(self, t):
         pass
     
 class RainbowPattern(AnimatedPattern):
-    def __init__(self, length: int, speed: float, scale: float):
+    def __init__(self, length: int, speed: float, scale: int):
         super().__init__(Pattern.rainbow(length))
         self.speed = speed
         self.length = length
         self.scale = scale
         self.shift = 0.0
         
-    def update(self):
-        hues = [(h*self.scale/self.length + self.shift) % 1 for h in range(self.length)]
-        self.buffer_view = [hslToRgb((h, 1, 0.5)) for h in hues]
-        self.shift += self.speed
+        self.hues = [(h*self.scale/self.length) % 1 for h in range(2*self.length)]
+        self.colors = [hslToRgb((h, 1, 0.5)) for h in self.hues]
+    def update(self, t):
+        self.buffer_view = self.colors[int(self.shift*self.length):int(self.shift*self.length)+self.length]
+        self.shift = self.speed*t
         self.shift %= 1
         
     
@@ -153,7 +154,7 @@ class MovingPattern(AnimatedPattern):
     def set_speed(self, speed: int):
         self.speed = speed
         
-    def update(self):
+    def update(self, t):
         self.offest(self.speed)
         
 class BreathingPattern(AnimatedPattern):
@@ -161,9 +162,10 @@ class BreathingPattern(AnimatedPattern):
         super().__init__(pattern)
         self.speed = speed
         self.frame = 0
+        #self.frames = [0.5+0.5*math.cos(2*math.pi*self.frame*self.speed)
         
-    def update(self):
-        brightness = 0.5+0.5*math.cos(2*math.pi*self.frame*self.speed)
-        self.frame += 1
-        self.frame %= self.speed
+    def update(self, t):
+        t %= 100
+        brightness = 0.5+0.5*math.cos(2*math.pi*t*self.speed)
         self.set_brightness(brightness)
+

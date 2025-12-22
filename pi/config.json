@@ -15,8 +15,8 @@
         {
             "Name": "Workbench",
             "Pin": 7,
-            "Length": 106,
-            "Reversed": false
+            "Length": 140,
+            "Reversed": true
         },
         {
             "Name": "Workbench Center",
