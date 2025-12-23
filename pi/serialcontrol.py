@@ -44,10 +44,9 @@ SET_RANGE_CODE = 0b0110 # 2 bytes for start + end idx, 3 bytes for color
 BRIGHTNESS_CODE = 0b1000 # 1 byte for brightness level
 BREATHING_CODE = 0b1001 # 1 byte 
 
-def send_config(id: int, reversed: bool, pin: int, length: int):
-    pass
+def send_config(id: int, pin: int, length: int):
     length_byte0 = (length >> 8) & (0b11)
-    byte0 = (1 << 7 if reversed else 0) | ((pin & 0b11111) << 2) | length_byte0
+    byte0 = ((pin & 0b11111) << 2) | length_byte0
     byte1 = length & 0xFF
     send_control_code(id, CONFIG_STRIP_CODE, [byte0, byte1])
     
@@ -56,10 +55,10 @@ def send_control_code(id: int, code: int, data: (list[int] | int) = []):
         for i in range(len(data)):
             if data[i] == 3:
                 data[i] = 4
-        _serial_port.write([0xFF, id << 4 | code] + data)
+        _serial_port.write(bytes([0xFF, id << 4 | code] + data))
     else:
         if data == 3:
-            data == 4
+            data = 4
 
-        _serial_port.write([0xFF, id << 4 | code, data])
+        _serial_port.write(bytes([0xFF, id << 4 | code, data]))
     

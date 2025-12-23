@@ -141,6 +141,7 @@ void apply_pattern(uint8_t id, uint8_t control_code, uint8_t data[]) {
     case RAINBOW_CODE:
       patterns[id] = Pattern::RAINBOW;
       speeds[id] = data[0];
+      scales[id] = data[1];
       break;
     case GRADIENT_CODE:
       patterns[id] = Pattern::GRADIENT;
