@@ -2,7 +2,6 @@ from nicegui import app, ui
 import nextmatch
 import serialcontrol as ser
 import json
-from pynput import keyboard
 
 PATTERN_DICT = {ser.OFF_CODE: 'Off', ser.RAINBOW_CODE: 'Rainbow', ser.SOLID_CODE: 'Solid', ser.GRADIENT_CODE: 'Gradient', ser.BREATHING_CODE: 'Breathing'}    
 
@@ -81,7 +80,7 @@ def save_global_preset(name):
     global_presets[name] = preset
     global_preset_select.set_value(name)
     
-def get_global_presets() -> dict[str,dict]:
+def get_global_presets() -> dict[str,list[dict]]:
     with open('global_presets.json') as f:
         return json.load(f)
     
@@ -104,7 +103,7 @@ async def delete_global_preset(preset):
     
 def apply_global_preset(name):
     for i in range(min(len(strip_panels),len(global_presets[name]))):
-        strip_panels[i].apply_preset(global_presets[name][i])
+        strip_panels[i].apply_preset_values(global_presets[name][i])
         strip_panels[i].update()
     
 async def save_global_preset_popup():
@@ -255,8 +254,7 @@ class StripPanel:
                 self.pattern_display.classes(remove=self.current_pattern_classes, add=f'border-none !bg-linear-to-r from-[{self.startcolor.value}] to-[{self.endcolor.value}]')
                 self.current_pattern_classes = f'border-none !bg-linear-to-r from-[{self.startcolor.value}] to-[{self.endcolor.value}]'
             case ser.BREATHING_CODE:
-                ser.send_control_code(self.strip_id, ser.SOLID_CODE, hex_color_to_list(self.color.value))
-                ser.send_control_code(self.strip_id, ser.BREATHING_CODE, self.speed.value)
+                ser.send_control_code(self.strip_id, ser.BREATHING_CODE, [self.speed.value]+hex_color_to_list(self.color.value))
                 self.pattern_display.classes(remove=self.current_pattern_classes, add=f'border-none !bg-[{self.color.value}]')
                 self.current_pattern_classes = f'border-none !bg-[{self.color.value}]'
                 
@@ -335,9 +333,9 @@ class StripPanel:
         
     def load_preset(self):
         preset = presets[self.preset_select.value or 'Default']
-        self.apply_preset(preset)
+        self.apply_preset_values(preset)
         
-    def apply_preset(self, preset):
+    def apply_preset_values(self, preset):
         self.pattern_select.set_value(preset['Pattern'])
         self.brightness.set_value(preset['Brightness'])
         self.color.set_value(preset['Color'])
