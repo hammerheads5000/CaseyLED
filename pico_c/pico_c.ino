@@ -30,16 +30,16 @@ enum Pattern {
   BREATHING
 };
 
-uint8_t pins[MAX_STRIPS] = {-1};
-size_t lengths[MAX_STRIPS] = {0};
+uint8_t pins[MAX_STRIPS] = {255};
+uint8_t lengths[MAX_STRIPS] = {0};
 Pattern patterns[MAX_STRIPS] = {Pattern::OFF};
 uint8_t brightnesses[MAX_STRIPS] = {255};
 uint8_t speeds[MAX_STRIPS] = {0};
 uint8_t scales[MAX_STRIPS] = {0};
 CRGB colors[MAX_STRIPS] = {CRGB(0)};
-size_t num_strips = 0;
+uint8_t num_strips = 0;
 CRGB leds[MAX_STRIPS][MAX_LEN];
-CLEDController controllers[MAX_STRIPS];
+CLEDController *controllers[MAX_STRIPS];
 
 void setup() {
   delay(2000);
@@ -47,12 +47,35 @@ void setup() {
 }
 
 void delete_strip_data(uint8_t id) {
-  controllers[id].clearLedData();
+  controllers[id]->clearLeds();
+  controllers[id]->setEnabled(false);
   pins[id] = -1;
 }
 
-void add_strip_data(uint8_t id, uint8_t pin, size_t length) {
-  controllers[id] = FastLED.addLeds<LED_TYPE, pin, COLOR_ORDER>(leds[id], length).setCorrection(TypicalLEDStrip);
+void add_strip_data(uint8_t id, uint8_t pin, uint8_t length) {
+  // super hacky fix to allow variable pin for FastLEDs
+  switch (pin) {
+    case 0 : controllers[id] = &FastLED.addLeds<LED_TYPE, 0 , COLOR_ORDER>(leds[id], length); break;
+    case 1 : controllers[id] = &FastLED.addLeds<LED_TYPE, 1 , COLOR_ORDER>(leds[id], length); break;
+    case 2 : controllers[id] = &FastLED.addLeds<LED_TYPE, 2 , COLOR_ORDER>(leds[id], length); break;
+    case 3 : controllers[id] = &FastLED.addLeds<LED_TYPE, 3 , COLOR_ORDER>(leds[id], length); break;
+    case 4 : controllers[id] = &FastLED.addLeds<LED_TYPE, 4 , COLOR_ORDER>(leds[id], length); break;
+    case 5 : controllers[id] = &FastLED.addLeds<LED_TYPE, 5 , COLOR_ORDER>(leds[id], length); break;
+    case 11: controllers[id] = &FastLED.addLeds<LED_TYPE, 11, COLOR_ORDER>(leds[id], length); break;
+    case 12: controllers[id] = &FastLED.addLeds<LED_TYPE, 12, COLOR_ORDER>(leds[id], length); break;
+    case 13: controllers[id] = &FastLED.addLeds<LED_TYPE, 13, COLOR_ORDER>(leds[id], length); break;
+    case 14: controllers[id] = &FastLED.addLeds<LED_TYPE, 14, COLOR_ORDER>(leds[id], length); break;
+    case 15: controllers[id] = &FastLED.addLeds<LED_TYPE, 15, COLOR_ORDER>(leds[id], length); break;
+    case 16: controllers[id] = &FastLED.addLeds<LED_TYPE, 16, COLOR_ORDER>(leds[id], length); break;
+    case 17: controllers[id] = &FastLED.addLeds<LED_TYPE, 17, COLOR_ORDER>(leds[id], length); break;
+    case 18: controllers[id] = &FastLED.addLeds<LED_TYPE, 18, COLOR_ORDER>(leds[id], length); break;
+    case 19: controllers[id] = &FastLED.addLeds<LED_TYPE, 19, COLOR_ORDER>(leds[id], length); break;
+    case 21: controllers[id] = &FastLED.addLeds<LED_TYPE, 21, COLOR_ORDER>(leds[id], length); break;
+    case 22: controllers[id] = &FastLED.addLeds<LED_TYPE, 22, COLOR_ORDER>(leds[id], length); break;
+    case 26: controllers[id] = &FastLED.addLeds<LED_TYPE, 26, COLOR_ORDER>(leds[id], length); break;
+    case 27: controllers[id] = &FastLED.addLeds<LED_TYPE, 27, COLOR_ORDER>(leds[id], length); break;
+  }
+  controllers[id]->setCorrection(TypicalLEDStrip);
   pins[id] = pin;
   lengths[id] = length;
 }
@@ -67,12 +90,14 @@ void delete_strip(uint8_t id) {
     brightnesses[i] = brightnesses[i+1];
     speeds[i] = speeds[i+1];
     colors[i] = colors[i+1];
-    leds[i] = leds[i+1];
+    for (int j = 0; j < MAX_LEN; j++) {
+      leds[i][j] = leds[i+1][j];
+    }
   }
   num_strips--;
 }
 
-void add_strip(uint8_t pin, size_t length) {
+void add_strip(uint8_t pin, uint8_t length) {
   add_strip_data(num_strips, pin, length);
   num_strips++;
 }
@@ -80,7 +105,7 @@ void add_strip(uint8_t pin, size_t length) {
 void apply_config(uint8_t id, uint8_t data[]) {
   // bool reversed = (bool)(data[0] >> 7);
   uint8_t pin = (data[0] & 0b01111100) >> 2;
-  size_t length = ((data[0] & 0b11) << 8) + data[1];
+  uint8_t length = ((data[0] & 0b11) << 8) + data[1];
 
   if (id < num_strips && (pins[id] != pin || lengths[id] != length)) {
       delete_strip_data(id);
@@ -111,7 +136,7 @@ void apply_pattern(uint8_t id, uint8_t control_code, uint8_t data[]) {
       break;
     case SOLID_CODE:
       patterns[id] = Pattern::SOLID;
-      solid(id, CRGB(data[0], data[1], data[2]);
+      solid(id, CRGB(data[0], data[1], data[2]));
       break;
     case RAINBOW_CODE:
       patterns[id] = Pattern::RAINBOW;
@@ -124,7 +149,7 @@ void apply_pattern(uint8_t id, uint8_t control_code, uint8_t data[]) {
     case BREATHING_CODE:
       patterns[id] = Pattern::BREATHING;
       speeds[id] = data[0];
-      colors[id] = CRGB(data[1], data[2], data[3]));
+      colors[id] = CRGB(data[1], data[2], data[3]);
       break;
     case BRIGHTNESS_CODE:
       brightnesses[id] = data[0];
@@ -147,7 +172,7 @@ void solid(uint8_t id, CRGB color) {
 }
 
 void gradient(uint8_t id, CRGB start, CRGB end) {
-  fill_gradient(leds[id], 0, start, lengths[id], end);
+  fill_gradient_RGB(leds[id], 0, start, end);
 }
 
 void rainbow(uint8_t id) {
@@ -156,7 +181,7 @@ void rainbow(uint8_t id) {
 
 void breathing(uint8_t id) {
   fill_solid(leds[id], lengths[id], colors[id]);
-  nscale8(leds[id], lengths[id], beatsin8(speeds[id]))
+  nscale8(leds[id], lengths[id], beatsin8(speeds[id]));
 }
 
 void set_pattern(uint8_t id, Pattern pattern) {
@@ -201,7 +226,7 @@ int read_data(uint8_t buffer[], uint8_t control_code) {
       data_len = 1;
       break;
   }
-  size_t num_read = Serial.readBytes(buffer, data_len);
+  uint8_t num_read = Serial.readBytes(buffer, data_len);
   if (num_read < data_len) {
     Serial.println("WARNING: Reading data timed out");
     return -1;
@@ -218,7 +243,7 @@ void loop() {
     if (read_data(buffer, control_code) == 0) {
       switch (control_code) {
         case CONFIG_STRIP_CODE:
-          apply_config(id, data);
+          apply_config(id, buffer);
           break;
         case DELETE_STRIP_CODE:
           delete_strip(id);
