@@ -4,31 +4,56 @@
             "Name": "Left",
             "Pin": 8,
             "Length": 106,
-            "Reversed": false
+            "Pattern": {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            }
         },
         {
             "Name": "Right",
             "Pin": 4,
             "Length": 106,
-            "Reversed": false
+            "Pattern": {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            }
         },
         {
             "Name": "Workbench",
             "Pin": 7,
             "Length": 140,
-            "Reversed": true
+            "Pattern": {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            }
         },
         {
             "Name": "Workbench Center",
             "Pin": 10,
             "Length": 142,
-            "Reversed": false
+            "Pattern": {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            }
         },
         {
             "Name": "Shelf",
             "Pin": 14,
             "Length": 140,
-            "Reversed": false
+            "Pattern": {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            }
         }
     ]
 }

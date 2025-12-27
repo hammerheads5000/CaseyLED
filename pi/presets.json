@@ -1,10 +1,1 @@
-{
-    "Default": {
-        "Pattern": 2,
-        "Brightness": 255,
-        "Color": "#DDAA88",
-        "Start Color": "#FFFFFF",
-        "End Color": "#0009B8",
-        "Speed": 80
-    }
-}
+{}

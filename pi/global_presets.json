@@ -1,86 +1,45 @@
 {
-    "Default": [
-        {
-            "Pattern": 0,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        },
-        {
-            "Pattern": 0,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        },
-        {
-            "Pattern": 0,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        },
-        {
-            "Pattern": 0,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        },
-        {
-            "Pattern": 0,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        }
-    ],
-    "1": [
-        {
-            "Pattern": 1,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        },
-        {
-            "Pattern": 0,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        },
-        {
-            "Pattern": 0,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        },
-        {
-            "Pattern": 0,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        },
-        {
-            "Pattern": 7,
-            "Brightness": 255,
-            "Color": "#DDAA88",
-            "Start Color": "#FFFFFF",
-            "End Color": "#0009B8",
-            "Speed": 80
-        }
-    ]
+    "max rainbow": {
+        "Name": "max rainbow",
+        "Patterns": [
+            {
+                "Name": "Rainbow",
+                "Control Code": 2,
+                "Numeric": {
+                    "Speed": 254,
+                    "Scale": 254,
+                    "Brightness": 255
+                },
+                "Color": {}
+            },
+            {
+                "Name": "Rainbow",
+                "Control Code": 2,
+                "Numeric": {
+                    "Speed": 254,
+                    "Scale": 254,
+                    "Brightness": 255
+                },
+                "Color": {}
+            },
+            {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            },
+            {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            },
+            {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            }
+        ]
+    }
 }
