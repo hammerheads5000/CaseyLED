@@ -7,7 +7,9 @@ try:
             baudrate=115200,
             parity=serial.PARITY_NONE,
             stopbits=serial.STOPBITS_ONE,
-            bytesize=serial.EIGHTBITS)
+            bytesize=serial.EIGHTBITS,
+            timeout=1,
+            write_timeout=1)
     if not _serial_port.is_open:
         _serial_port.open()
 except:
@@ -18,7 +20,9 @@ except:
                 baudrate=115200,
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
-                bytesize=serial.EIGHTBITS)
+                bytesize=serial.EIGHTBITS,
+                timeout=1,
+                write_timeout=1)
         if not _serial_port.is_open:
             _serial_port.open()
     except Exception as e:
@@ -48,9 +52,10 @@ def send_config(id: int, pin: int, length: int):
     length_byte0 = (length >> 8) & (0b11)
     byte0 = ((pin & 0b11111) << 2) | length_byte0
     byte1 = length & 0xFF
-    send_control_code(id, CONFIG_STRIP_CODE, [byte0, byte1])
+    #send_control_code(id, CONFIG_STRIP_CODE, [byte0, byte1])
     
 def send_control_code(id: int, code: int, data: (list[int] | int) = []):
+    print(data)
     if isinstance(data, list):
         for i in range(len(data)):
             if data[i] == 3:

@@ -1,1 +1,24 @@
-{}
+{
+    "Rainbow": {
+        "Name": "Rainbow",
+        "Pattern": {
+            "Name": "Rainbow",
+            "Control Code": 2,
+            "Numeric": {
+                "Speed": 33,
+                "Scale": 65,
+                "Brightness": 102
+            },
+            "Color": {}
+        }
+    },
+    "Off": {
+        "Name": "Off",
+        "Pattern": {
+            "Name": "Off",
+            "Control Code": 0,
+            "Numeric": {},
+            "Color": {}
+        }
+    }
+}

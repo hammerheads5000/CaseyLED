@@ -36,7 +36,7 @@ class Pattern:
     color_params: dict[str, str] = field(default_factory=dict) # stored as hex strings
     
     def generate_bytes(self) -> list[int]:
-        return self.numeric_bytes() + self.numeric_bytes()
+        return self.numeric_bytes() + self.color_bytes()
     
     def color_bytes(self) -> list[int]:
         output = []
@@ -91,23 +91,23 @@ class Pattern:
         
     @classmethod
     def off(cls):
-        return cls('Off', 0b0000, 'border border-gray-700 !bg-none', {}, {})
+        return cls('Off', ser.OFF_CODE, 'border border-gray-700 !bg-none', {}, {})
     
     @classmethod
     def solid(cls, color: str='#DDAA88', brightness: int=255):
-        return cls('Solid', 0b0001, f'border-none !bg-[{color}]', {'Brightness': brightness}, {'Color': color})
+        return cls('Solid', ser.SOLID_CODE, f'border-none !bg-[{color}]', {'Brightness': brightness}, {'Color': color})
     
     @classmethod
     def rainbow(cls, speed: int = 20, scale: int = 20, brightness: int=255):
-        return cls('Rainbow', 0b0010, 'border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700', {'Speed': speed, 'Scale': scale, 'Brightness': brightness}, {})
+        return cls('Rainbow', ser.RAINBOW_CODE, 'border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700', {'Speed': speed, 'Scale': scale, 'Brightness': brightness}, {})
     
     @classmethod
     def gradient(cls, start: str='#FFFFFF', end: str='#0009B8', brightness: int=255):
-        return cls('Gradient', 0b0111, f'border-none !bg-linear-to-r from-[{start}] to-[{end}]', {'Brightness': brightness}, {'Start Color': start, 'End Color': end})
+        return cls('Gradient', ser.GRADIENT_CODE, f'border-none !bg-linear-to-r from-[{start}] to-[{end}]', {'Brightness': brightness}, {'Start Color': start, 'End Color': end})
     
     @classmethod
     def breathing(cls, speed: int=80, color: str='#0009B8', brightness: int=255):
-        return cls('Breathing', 0b0010, f'border-none !bg-[{color}]', {'Speed': speed, 'Brightness': brightness}, {'Color': color})
+        return cls('Breathing', ser.BREATHING_CODE, f'border-none !bg-[{color}]', {'Speed': speed, 'Brightness': brightness}, {'Color': color})
 
 @dataclass
 class StripPreset(dict):
@@ -264,9 +264,9 @@ def global_preset_dropdown():
         if result:
             dropdown.close()
             delete_global_preset(name)
-    with ui.dropdown_button('Load Global Preset', auto_close=False) as dropdown, ui.column().classes('gap-0'):
+    with ui.dropdown_button('Load Global Preset', auto_close=False) as dropdown:
         for name, preset in global_presets.items():
-            with ui.button_group().classes('w-full').props('square'):
+            with ui.item().props('square'):
                 ui.button(name, on_click=(lambda _,preset=preset: _load(preset))).classes('grow').props('square')
                 ui.button(icon='delete', color='red', on_click=(lambda _,preset=preset:_delete(preset.name))).props('square')
     
@@ -402,14 +402,15 @@ class Strip:
             if result:
                 dropdown.close()
                 await self.delete_preset(name)
-        with ui.dropdown_button('Load', auto_close=False) as dropdown, ui.column().classes('gap-0'):
+        with ui.dropdown_button('Load', auto_close=False) as dropdown:
             for name, preset in presets.items():
-                with ui.button_group().classes('w-full').props('square'):
+                with ui.item().classes('p-0').props('square no-shadow'):
                     ui.button(name, on_click=(lambda _,preset=preset: _load(preset))).classes('grow').props('square')
                     ui.button(icon='delete', color='red', on_click=(lambda _,preset=preset:_delete(preset.name))).props('square')
             
     async def _select_pattern(self, name: str):
         self.set_pattern(self._patterns[name])
+        self.update()
         await self.ui_select.refresh()
             
     @ui.refreshable_method
@@ -464,7 +465,7 @@ def main():
     load_global_presets()
     init_strips()
     root()
-    ui.run(title='CaseyLEDs', native=True, dark=True, favicon='🌟')
+    ui.run(title='CaseyLEDs', dark=True, favicon='🌟')
     
 if __name__ in {'__main__', '__mp_main__'}:
     main()

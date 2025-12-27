@@ -16,10 +16,14 @@
             "Pin": 4,
             "Length": 106,
             "Pattern": {
-                "Name": "Off",
-                "Control Code": 0,
-                "Numeric": {},
-                "Color": {}
+                "Name": "Solid",
+                "Control Code": 1,
+                "Numeric": {
+                    "Brightness": 205
+                },
+                "Color": {
+                    "Color": "#DDAA88"
+                }
             }
         },
         {
@@ -27,10 +31,14 @@
             "Pin": 7,
             "Length": 140,
             "Pattern": {
-                "Name": "Off",
-                "Control Code": 0,
-                "Numeric": {},
-                "Color": {}
+                "Name": "Solid",
+                "Control Code": 1,
+                "Numeric": {
+                    "Brightness": 223
+                },
+                "Color": {
+                    "Color": "#DDAA88"
+                }
             }
         },
         {

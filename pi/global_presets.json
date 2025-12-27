@@ -1,14 +1,49 @@
 {
-    "max rainbow": {
-        "Name": "max rainbow",
+    "Off": {
+        "Name": "Off",
+        "Patterns": [
+            {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            },
+            {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            },
+            {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            },
+            {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            },
+            {
+                "Name": "Off",
+                "Control Code": 0,
+                "Numeric": {},
+                "Color": {}
+            }
+        ]
+    },
+    "Everything Rainbow": {
+        "Name": "Everything Rainbow",
         "Patterns": [
             {
                 "Name": "Rainbow",
                 "Control Code": 2,
                 "Numeric": {
-                    "Speed": 254,
-                    "Scale": 254,
-                    "Brightness": 255
+                    "Speed": 33,
+                    "Scale": 65,
+                    "Brightness": 102
                 },
                 "Color": {}
             },
@@ -16,28 +51,40 @@
                 "Name": "Rainbow",
                 "Control Code": 2,
                 "Numeric": {
-                    "Speed": 254,
-                    "Scale": 254,
-                    "Brightness": 255
+                    "Speed": 33,
+                    "Scale": 65,
+                    "Brightness": 102
                 },
                 "Color": {}
             },
             {
-                "Name": "Off",
-                "Control Code": 0,
-                "Numeric": {},
+                "Name": "Rainbow",
+                "Control Code": 2,
+                "Numeric": {
+                    "Speed": 33,
+                    "Scale": 65,
+                    "Brightness": 102
+                },
                 "Color": {}
             },
             {
-                "Name": "Off",
-                "Control Code": 0,
-                "Numeric": {},
+                "Name": "Rainbow",
+                "Control Code": 2,
+                "Numeric": {
+                    "Speed": 33,
+                    "Scale": 65,
+                    "Brightness": 102
+                },
                 "Color": {}
             },
             {
-                "Name": "Off",
-                "Control Code": 0,
-                "Numeric": {},
+                "Name": "Rainbow",
+                "Control Code": 2,
+                "Numeric": {
+                    "Speed": 33,
+                    "Scale": 65,
+                    "Brightness": 102
+                },
                 "Color": {}
             }
         ]
