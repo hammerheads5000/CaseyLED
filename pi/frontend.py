@@ -1,9 +1,17 @@
 from dataclasses import dataclass, field
 import dataclasses
-from nicegui import binding, ui
+from nicegui import events, ui
 import serialcontrol as ser
 import json
 from typing import Callable
+
+def handle_key(e: events.KeyEventArguments):
+    if e.key.f8 and e.action.keydown and 'Off' in global_presets.keys():
+        apply_global_preset(global_presets['Off'])
+    elif e.key.f12 and e.action.keydown and 'Main' in global_presets.keys():
+        apply_global_preset(global_presets['Main'])
+
+keyboard = ui.keyboard(on_key=handle_key)
 
 def hex_str_to_rgb(hex: str) -> list[int]:
     if hex[0] == '#': # strip leading '#'
