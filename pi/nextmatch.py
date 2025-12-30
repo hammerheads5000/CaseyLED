@@ -2,11 +2,15 @@ import time
 import requests
 import json
 
-TEAM_KEY = 'frc1540'
+TEAM_NUMBER = '1540'
+TEAM_KEY = 'frc'+TEAM_NUMBER
 EVENT_KEY = '2025wass'
 
-TBA_BASE_URL = f'https://www.thebluealliance.com/api/v3/team/{TEAM_KEY}/event/{EVENT_KEY}/matches/simple'
+TBA_URL = f'https://www.thebluealliance.com/api/v3/team/{TEAM_KEY}/event/{EVENT_KEY}/matches/simple'
 TBA_API_KEY = 'FpRFwcc2ADT4NcREAW1fELKVweMyTWyIf7R6z5mMs0QoWPrWyQiq4XLJLfIghsXj'
+
+NEXUS_URL = 'https://frc.nexus/api/v1/event/' + EVENT_KEY
+NEXUS_API_KEY = '1__9_K5B5NrJxAbHdFJhW8SJnb8'
 
 tba_prev_etag = '"cd00f5b05a82f7841e0861d7e78099adaa92475"' # str | Value of the `ETag` header in the most recently cached response by the client. (optional)
 tba_next_valid_time = 0
@@ -18,9 +22,12 @@ def get_tba_matches():
     if time.time() < tba_next_valid_time:
         return tba_cached_response
     
-    api_response = requests.get(TBA_BASE_URL, headers={"X-TBA-Auth-Key": TBA_API_KEY, "If-None-Match": tba_prev_etag})
+    api_response = requests.get(TBA_URL, headers={"X-TBA-Auth-Key": TBA_API_KEY, "If-None-Match": tba_prev_etag})
     tba_prev_etag = api_response.headers.get('ETag')
-    tba_next_valid_time = time.time() + int(api_response.headers.get('Cache-Control').split('=')[1].split(',')[0])
+    if api_response.headers.get('Cache-Control') is None:
+        print('ERROR: found no "Cache-Control" header from TBA')
+        return tba_cached_response
+    tba_next_valid_time = time.time() + int(str(api_response.headers.get('Cache-Control')).split('=')[1].split(',')[0])
     
     if (api_response.status_code == 304):
         return tba_cached_response
@@ -29,7 +36,7 @@ def get_tba_matches():
     
     return tba_cached_response
 
-def get_next_match():
+def get_tba_next_match():
     matches = get_tba_matches()
     if matches is None:
         return None
@@ -38,12 +45,39 @@ def get_next_match():
             return match
     return None
 
-def get_color(match):
+def get_tba_station():
+    match = get_tba_next_match()
     if not match:
         return None
     if TEAM_KEY in match['alliances']['red']['team_keys']:
-        return 'red'
+        return 'red', match['alliances']['red']['team_keys'].index(TEAM_KEY)+1
     elif TEAM_KEY in match['alliances']['blue']['team_keys']:
-        return 'blue'
+        return 'blue', match['alliances']['blue']['team_keys'].index(TEAM_KEY)+1
     else:
         return None
+    
+def get_nexus_matches() -> str | filter:
+    response = requests.get(NEXUS_URL, headers={'Nexus-Api-Key': NEXUS_API_KEY})
+    
+    if not response.ok:
+        return 'Nexus error '+response.text
+    
+    data = response.json()
+    
+    matches = filter(lambda m: TEAM_NUMBER in m.get('redTeams', []) + m.get('blueTeams', []), data['matches'])
+    return matches
+
+def get_nexus_next_match():
+    matches = get_nexus_matches()
+    if isinstance(matches, str):
+        return matches
+    return next(filter(lambda m: not m['status'] == 'On field', matches), 'Nexus error: No next match!')
+
+def get_nexus_station():
+    next_match = get_nexus_next_match()
+    if isinstance(next_match, str):
+        return next_match
+    if TEAM_NUMBER in next_match.get('redTeams', []):
+        return 'red', next_match.get('redTeams').index(TEAM_NUMBER)+1
+    else:
+        return 'blue', next_match.get('blueTeams').index(TEAM_NUMBER)+1

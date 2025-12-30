@@ -1,5 +1,7 @@
 import serial
 import serial.tools.list_ports
+from typing import Callable, Any
+import threading
 
 try:
     _serial_port = serial.Serial(
@@ -52,10 +54,9 @@ def send_config(id: int, pin: int, length: int):
     length_byte0 = (length >> 8) & (0b11)
     byte0 = ((pin & 0b11111) << 2) | length_byte0
     byte1 = length & 0xFF
-    #send_control_code(id, CONFIG_STRIP_CODE, [byte0, byte1])
+    # send_control_code(id, CONFIG_STRIP_CODE, [byte0, byte1])
     
 def send_control_code(id: int, code: int, data: (list[int] | int) = []):
-    print(data)
     if isinstance(data, list):
         for i in range(len(data)):
             if data[i] == 3:
@@ -67,3 +68,18 @@ def send_control_code(id: int, code: int, data: (list[int] | int) = []):
 
         _serial_port.write(bytes([0xFF, id << 4 | code, data]))
     
+buffer: bytearray = bytearray()
+
+def read_buffer() -> list[str] | None:
+    buffer.extend(_serial_port.read_all() or [])
+    if buffer.endswith(b'\n'):
+        lines = buffer.splitlines()
+        buffer.clear()
+        return [str(l) for l in lines]
+    elif buffer.find(b'\n') >= 0:
+        lines = buffer.splitlines()
+        buffer.clear()
+        buffer.extend(lines[-1])
+        return [str(l) for l in lines[:-1]]
+    
+    return None

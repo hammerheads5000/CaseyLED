@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
-import dataclasses
-from nicegui import events, ui
+import nextmatch
+from nicegui import events, ui, app
 import serialcontrol as ser
 import json
 from typing import Callable
@@ -69,7 +69,7 @@ class Pattern:
                 return cls.gradient(pattern_dict['Color']['Start Color'], pattern_dict['Color']['End Color'], pattern_dict['Numeric']['Brightness'])
             case 'Breathing':
                 return cls.breathing(pattern_dict['Numeric']['Speed'], pattern_dict['Color']['Color'], pattern_dict['Numeric']['Brightness'])
-        print(f'ERROR: failed to parse pattern from dict with name {pattern_dict["Name"]}')
+        log_error(f'ERROR: failed to parse pattern from dict with name {pattern_dict["Name"]}')
         return cls()
         
     def property_panel(self, pattern_select: ui.select, update) -> None:
@@ -96,6 +96,10 @@ class Pattern:
     @classmethod
     def solid(cls, color: str='#DDAA88', brightness: int=255):
         return cls('Solid', ser.SOLID_CODE, f'border-none !bg-[{color}]', {'Brightness': brightness}, {'Color': color})
+    
+    @classmethod
+    def match(cls, color: str="#FF0000", brightness: int=255):
+        return cls('Match', ser.SOLID_CODE, f'border-none !bg-[{color}]', {'Brightness': brightness}, {'Color': color})
     
     @classmethod
     def rainbow(cls, speed: int = 20, scale: int = 20, brightness: int=255):
@@ -151,7 +155,7 @@ def init_strips():
                 strips.append(Strip.fromdict(configs[i]))
                 ser.send_config(i, strips[i].pin, strips[i].length)
     except (KeyError, json.decoder.JSONDecodeError):
-        print('ERROR: failed to parse config.json')
+        log_error('ERROR: failed to parse config.json')
             
 def update_config():
     with open('config.json') as f:
@@ -182,7 +186,7 @@ def load_presets():
             for name, preset in presets_json.items():
                 presets[name] = StripPreset.fromdict(preset)
     except (KeyError, json.decoder.JSONDecodeError):
-        print('ERROR: failed to parse presets.json')
+        log_error('ERROR: failed to parse presets.json')
 
 def save_global_presets():
     with open('global_presets.json', 'w') as f:
@@ -198,7 +202,7 @@ def load_global_presets():
             for name, global_preset in global_presets_json.items():
                 global_presets[name] = GlobalPreset.fromdict(global_preset)
     except (KeyError, json.decoder.JSONDecodeError):
-        print('ERROR: failed to parse global_presets.json')
+        log_error('ERROR: failed to parse global_presets.json')
 
 def save_global_preset(name: str):
     patterns = [Pattern.fromdict(s.pattern.asdict()) for s in strips]
@@ -287,7 +291,7 @@ class Strip:
         self.pin = pin
         self.length = length
         self.pattern = pattern
-        self._patterns = {'Off': Pattern.off(), 'Solid': Pattern.solid(), 'Rainbow': Pattern.rainbow(), 'Gradient': Pattern.gradient(), 'Breathing': Pattern.breathing()}
+        self._patterns = {'Off': Pattern.off(), 'Solid': Pattern.solid(), 'Rainbow': Pattern.rainbow(), 'Gradient': Pattern.gradient(), 'Breathing': Pattern.breathing(), 'Match': Pattern.match()}
         self.panel_visible = False
     
     @classmethod
@@ -439,32 +443,86 @@ def delete_strip(strip: Strip):
     save_config()
     root.refresh()
 
+def update_queue_lights():
+    color, station = '#FFFFFF', 1
+    nexus = nextmatch.get_nexus_station()
+    tba = nextmatch.get_tba_station()
+    if not isinstance(nexus, str):
+        color, station = nexus
+    else:
+        log_warning(nexus)
+        if tba:
+            color, station = tba
+        
+    if color == 'red':
+        color = '#FF0000'
+    elif color == 'blue':
+        color = '#0000FF'
+        
+    for strip in strips:
+        if strip.pattern.name == 'Match':
+            strip.set_pattern(Pattern.match(color=color, brightness=strip.pattern.numeric_params['Brightness']))
+
+def log(txt: str):
+    print(txt)
+    _log.push(txt)
+def log_serial(txt: str):
+    print(txt)
+    _log.push(txt, classes='text-blue')
+def log_debug(txt: str):
+    print(txt)
+    _log.push(txt, classes='text-grey')
+def log_warning(txt: str):
+    print(txt)
+    _log.push(txt, classes='text-orange')
+def log_error(txt: str):
+    print(txt)
+    _log.push(txt, classes='text-red')
+
 strips: list[Strip] = []
 presets: dict[str, StripPreset] = {}
 global_presets: dict[str, GlobalPreset] = {}
 global_preset_select: ui.select
+_log: ui.log
 
 @ui.refreshable
 def root():
-    with ui.row():
-        global_preset_dropdown()
-        ui.button(icon='save', on_click=save_global_preset_popup).tooltip('Save global preset')
-        ui.button('Add Strip +', on_click=add_strip_popup)
-        ui.button(icon='refresh', on_click=update_config).tooltip('Refresh Configuration from config.json')
-    with ui.row(align_items='stretch', wrap=False).classes('w-full'):
-        with ui.column().classes('w-54 gap-0'):
-            for strip in strips:
-                strip.ui_select()
-        ui.element().classes('grow')
-        with ui.column().classes('w-65 justify-self-end'):
-            for strip in strips:
-                strip.ui_panel()
+    global _log
+    with ui.tabs() as tabs:
+        led_tab = ui.tab('LEDs')
+        log_tab = ui.tab('Log')
+    
+    with ui.tab_panels(tabs, value=led_tab).classes('w-full'):
+        with ui.tab_panel(led_tab):
+            with ui.row():
+                global_preset_dropdown()
+                ui.button(icon='save', on_click=save_global_preset_popup).tooltip('Save global preset')
+                ui.button('Add Strip +', on_click=add_strip_popup)
+                ui.button(icon='refresh', on_click=update_config).tooltip('Refresh Configuration from config.json')
+            with ui.row(align_items='stretch', wrap=False).classes('w-full'):
+                with ui.column().classes('w-54 gap-0'):
+                    for strip in strips:
+                        strip.ui_select()
+                ui.element().classes('grow')
+                with ui.column().classes('w-65 justify-self-end'):
+                    for strip in strips:
+                        strip.ui_panel()
+        
+        with ui.tab_panel(log_tab):
+            _log = ui.log().classes('w-full')
+        
+def update_serial_log():
+    lines = ser.read_buffer() or []
+    for line in lines:
+        log_serial(line)
         
 def main():
     load_presets()
     load_global_presets()
     init_strips()
     root()
+    app.timer(10, update_queue_lights)
+    app.timer(1, update_serial_log)
     ui.run(title='CaseyLEDs', dark=True, favicon='🌟')
     
 if __name__ in {'__main__', '__mp_main__'}:
