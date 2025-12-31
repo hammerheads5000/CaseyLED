@@ -2,15 +2,15 @@ import time
 import requests
 import json
 
-TEAM_NUMBER = '1540'
+TEAM_NUMBER = '5000'
 TEAM_KEY = 'frc'+TEAM_NUMBER
-EVENT_KEY = '2025wass'
+EVENT_KEY = 'demo2539'
 
 TBA_URL = f'https://www.thebluealliance.com/api/v3/team/{TEAM_KEY}/event/{EVENT_KEY}/matches/simple'
 TBA_API_KEY = 'FpRFwcc2ADT4NcREAW1fELKVweMyTWyIf7R6z5mMs0QoWPrWyQiq4XLJLfIghsXj'
 
 NEXUS_URL = 'https://frc.nexus/api/v1/event/' + EVENT_KEY
-NEXUS_API_KEY = '1__9_K5B5NrJxAbHdFJhW8SJnb8'
+NEXUS_API_KEY = 'Mht-kAnPRquaDWPAxxkkFNaqtaw'
 
 tba_prev_etag = '"cd00f5b05a82f7841e0861d7e78099adaa92475"' # str | Value of the `ETag` header in the most recently cached response by the client. (optional)
 tba_next_valid_time = 0
@@ -78,6 +78,6 @@ def get_nexus_station():
     if isinstance(next_match, str):
         return next_match
     if TEAM_NUMBER in next_match.get('redTeams', []):
-        return 'red', next_match.get('redTeams').index(TEAM_NUMBER)+1
+        return 'red', next_match.get('redTeams').index(TEAM_NUMBER)+1, next_match['status']
     else:
-        return 'blue', next_match.get('blueTeams').index(TEAM_NUMBER)+1
+        return 'blue', next_match.get('blueTeams').index(TEAM_NUMBER)+1, next_match['status']

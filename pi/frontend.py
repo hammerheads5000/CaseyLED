@@ -96,11 +96,7 @@ class Pattern:
     @classmethod
     def solid(cls, color: str='#DDAA88', brightness: int=255):
         return cls('Solid', ser.SOLID_CODE, f'border-none !bg-[{color}]', {'Brightness': brightness}, {'Color': color})
-    
-    @classmethod
-    def match(cls, color: str="#FF0000", brightness: int=255):
-        return cls('Match', ser.SOLID_CODE, f'border-none !bg-[{color}]', {'Brightness': brightness}, {'Color': color})
-    
+        
     @classmethod
     def rainbow(cls, speed: int = 20, scale: int = 20, brightness: int=255):
         return cls('Rainbow', ser.RAINBOW_CODE, 'border-none !bg-linear-to-r/decreasing from-violet-700 via-[#00FF00] to-violet-700', {'Speed': speed, 'Scale': scale, 'Brightness': brightness}, {})
@@ -112,6 +108,30 @@ class Pattern:
     @classmethod
     def breathing(cls, speed: int=80, color: str='#0009B8', brightness: int=255):
         return cls('Breathing', ser.BREATHING_CODE, f'border-none !bg-[{color}]', {'Speed': speed, 'Brightness': brightness}, {'Color': color})
+
+@dataclass
+class QueuingPattern(Pattern):
+    status: str = 'Queuing soon'
+
+    def __init__(self, brightness: int=255, status='Queuing soon'):
+        self.name = 'Match'
+        self.status = status
+        self.numeric_params = {'Brightness': brightness}
+        self.color_params = {'Color': '#FFFFFF'}
+        self.preview_classes = f'border-none !bg-[#FFFFFF]'
+        self.control_code = ser.SOLID_CODE
+
+    def update(self, color: str, status: str):
+        if status == 'On deck':
+            self.control_code = ser.BREATHING_CODE, f'border-none !bg-[{color}]', {'Speed': 100, 'Brightness': brightness}, {'Color': color})
+        elif status == 'Now queuing':
+            return cls('Breathing', ser.BREATHING_CODE, f'border-none !bg-[{color}]', {'Speed': 50, 'Brightness': brightness}, {'Color': color})
+        
+        return cls('Match', ser.SOLID_CODE, f'border-none !bg-[{color}]', {'Brightness': brightness}, {'Color': color})
+
+    @classmethod
+    def match(cls, color: str="#FF0000", brightness: int=255, status='Queuing soon'):
+        
 
 @dataclass
 class StripPreset(dict):
@@ -448,7 +468,7 @@ def update_queue_lights():
     nexus = nextmatch.get_nexus_station()
     tba = nextmatch.get_tba_station()
     if not isinstance(nexus, str):
-        color, station = nexus
+        color, station, status = nexus
     else:
         log_warning(nexus)
         if tba:
@@ -465,25 +485,25 @@ def update_queue_lights():
 
 def log(txt: str):
     print(txt)
-    _log.push(txt)
+    # _log.push(txt)
 def log_serial(txt: str):
     print(txt)
-    _log.push(txt, classes='text-blue')
+    # _log.push(txt, classes='text-blue')
 def log_debug(txt: str):
     print(txt)
-    _log.push(txt, classes='text-grey')
+    # _log.push(txt, classes='text-grey')
 def log_warning(txt: str):
     print(txt)
-    _log.push(txt, classes='text-orange')
+    # _log.push(txt, classes='text-orange')
 def log_error(txt: str):
     print(txt)
-    _log.push(txt, classes='text-red')
+    # _log.push(txt, classes='text-red')
 
 strips: list[Strip] = []
 presets: dict[str, StripPreset] = {}
 global_presets: dict[str, GlobalPreset] = {}
 global_preset_select: ui.select
-_log: ui.log
+# _log: ui.log
 
 @ui.refreshable
 def root():
@@ -508,8 +528,8 @@ def root():
                     for strip in strips:
                         strip.ui_panel()
         
-        with ui.tab_panel(log_tab):
-            _log = ui.log().classes('w-full')
+        # with ui.tab_panel(log_tab):
+        #     _log = ui.log().classes('w-full')
         
 def update_serial_log():
     lines = ser.read_buffer() or []
