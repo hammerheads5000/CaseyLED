@@ -1,14 +1,16 @@
 from dataclasses import dataclass, field
 import nextmatch
-from nicegui import events, ui, app
+from nicegui import events, ui, app, run
 import serialcontrol as ser
 import json
 from typing import Callable
+import cam
+import asyncio
 
 def handle_key(e: events.KeyEventArguments):
     if e.key.f8 and e.action.keydown and 'Off' in global_presets.keys():
         apply_global_preset(global_presets['Off'])
-    elif e.key.f12 and e.action.keydown and 'Main' in global_presets.keys():
+    elif e.key.f9 and e.action.keydown and 'Main' in global_presets.keys():
         apply_global_preset(global_presets['Main'])
 
 keyboard = ui.keyboard(on_key=handle_key)
@@ -69,6 +71,8 @@ class Pattern:
                 return cls.gradient(pattern_dict['Color']['Start Color'], pattern_dict['Color']['End Color'], pattern_dict['Numeric']['Brightness'])
             case 'Breathing':
                 return cls.breathing(pattern_dict['Numeric']['Speed'], pattern_dict['Color']['Color'], pattern_dict['Numeric']['Brightness'])
+            case 'Match':
+                return QueuingPattern(pattern_dict['Numeric']['Brightness'])
         log_error(f'ERROR: failed to parse pattern from dict with name {pattern_dict["Name"]}')
         return cls()
         
@@ -122,16 +126,22 @@ class QueuingPattern(Pattern):
         self.control_code = ser.SOLID_CODE
 
     def update(self, color: str, status: str):
-        if status == 'On deck':
-            self.control_code = ser.BREATHING_CODE, f'border-none !bg-[{color}]', {'Speed': 100, 'Brightness': brightness}, {'Color': color})
-        elif status == 'Now queuing':
-            return cls('Breathing', ser.BREATHING_CODE, f'border-none !bg-[{color}]', {'Speed': 50, 'Brightness': brightness}, {'Color': color})
-        
-        return cls('Match', ser.SOLID_CODE, f'border-none !bg-[{color}]', {'Brightness': brightness}, {'Color': color})
+        self.preview_classes = f'border-none !bg-[{color}]'
+        self.color_params = {'Color': color}
+        self.status = status
+        if status in ['On deck', 'Now queuing', 'On field']:
+            self.control_code = ser.BREATHING_CODE
+        else:
+            self.control_code = ser.SOLID_CODE
 
-    @classmethod
-    def match(cls, color: str="#FF0000", brightness: int=255, status='Queuing soon'):
-        
+    def numeric_bytes(self) -> list[int]:
+        if self.status == 'On field':
+            return [100, self.numeric_params['Brightness']]
+        elif self.status == 'On deck':
+            return [50, self.numeric_params['Brightness']]
+        elif self.status == 'Now queuing':
+            return [25, self.numeric_params['Brightness']]
+        return [self.numeric_params['Brightness']]
 
 @dataclass
 class StripPreset(dict):
@@ -311,7 +321,7 @@ class Strip:
         self.pin = pin
         self.length = length
         self.pattern = pattern
-        self._patterns = {'Off': Pattern.off(), 'Solid': Pattern.solid(), 'Rainbow': Pattern.rainbow(), 'Gradient': Pattern.gradient(), 'Breathing': Pattern.breathing(), 'Match': Pattern.match()}
+        self._patterns = {'Off': Pattern.off(), 'Solid': Pattern.solid(), 'Rainbow': Pattern.rainbow(), 'Gradient': Pattern.gradient(), 'Breathing': Pattern.breathing(), 'Match': QueuingPattern()}
         self.panel_visible = False
     
     @classmethod
@@ -464,7 +474,7 @@ def delete_strip(strip: Strip):
     root.refresh()
 
 def update_queue_lights():
-    color, station = '#FFFFFF', 1
+    color, station, status = '#FFFFFF', 1, 'Queuing soon'
     nexus = nextmatch.get_nexus_station()
     tba = nextmatch.get_tba_station()
     if not isinstance(nexus, str):
@@ -479,9 +489,19 @@ def update_queue_lights():
     elif color == 'blue':
         color = '#0000FF'
         
-    for strip in strips:
-        if strip.pattern.name == 'Match':
-            strip.set_pattern(Pattern.match(color=color, brightness=strip.pattern.numeric_params['Brightness']))
+    for i in range(len(strips)):
+        if isinstance(strips[i].pattern, QueuingPattern):
+            strips[i].pattern.update(color, status) # type: ignore
+            strips[i].update()
+            strips[i].reload_ui()
+
+def update_battery_statuses():
+    statuses = cam.read_battery_vals()
+    for i in range(10):
+        if statuses[i] == 'r':
+            battery_statuses[i].props(add='color=red', remove='color=green')
+        else:
+            battery_statuses[i].props(add='color=green', remove='color=red')
 
 def log(txt: str):
     print(txt)
@@ -504,6 +524,7 @@ presets: dict[str, StripPreset] = {}
 global_presets: dict[str, GlobalPreset] = {}
 global_preset_select: ui.select
 # _log: ui.log
+battery_statuses: list[ui.icon] = []
 
 @ui.refreshable
 def root():
@@ -523,6 +544,9 @@ def root():
                 with ui.column().classes('w-54 gap-0'):
                     for strip in strips:
                         strip.ui_select()
+                    with ui.grid(columns=2).classes('mt-10 w-30 place-items-center shadow-3 py-5 rounded-md'):
+                        for i in range(10):
+                            battery_statuses.append(ui.icon('circle', size='large').props('color=red'))
                 ui.element().classes('grow')
                 with ui.column().classes('w-65 justify-self-end'):
                     for strip in strips:
@@ -535,15 +559,27 @@ def update_serial_log():
     lines = ser.read_buffer() or []
     for line in lines:
         log_serial(line)
-        
+
+async def cam_init():
+    await run.io_bound(cam.init)
+
 def main():
     load_presets()
     load_global_presets()
     init_strips()
     root()
     app.timer(10, update_queue_lights)
-    app.timer(1, update_serial_log)
-    ui.run(title='CaseyLEDs', dark=True, favicon='🌟')
+    # app.timer(1, update_serial_log)
+    app.timer(5, update_battery_statuses)
+    ui.run(title='CaseyLEDs', dark=True, favicon='🌟', reload=False)
     
+def on_exit():
+    pass
+    # cam.close()
+    # ser.close()
+
 if __name__ in {'__main__', '__mp_main__'}:
-    main()
+    try:
+        main()
+    finally:
+        on_exit()

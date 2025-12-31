@@ -1,36 +1,57 @@
 import cv2
 
-cam = cv2.VideoCapture(-1, cv2.CAP_V4L)
-cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cam = None
+def init():
+    global cam
+    cam = cv2.VideoCapture(0, cv2.CAP_V4L2)
+    cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cam.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+    cam.set(cv2.CAP_PROP_FOCUS, 20)
+    cam.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
+    cam.set(cv2.CAP_PROP_EXPOSURE, 10)
 
 positions = [
-    (1218, 545), (1076, 226),
-    (1064, 572), (948,  205),
-    (872,  588), (747,  183),
-    (622,  620), (524,  126),
-    (270,  646), (298,  108)
+    (1220, 600), (1120, 320),
+    (1108, 596), (1010, 280),
+    (955,  555), (885,  250),
+    (750,  530), (740,  200),
+    (525,  520), (550,  140)
 ]
+positions.reverse()
 
-while True:
+def read_battery_vals():
+    if cam is None:
+        init()
     ret, frame = cam.read()
-    cv2.imshow('Camera', frame)
-    out = ''
+    out = []
     for x,y in positions:
         pix = frame[y,x]
         b = pix[0]
         g = pix[1]
         r = pix[2]
-        if g > 245:
-            out += 'g'
+        if g > 245 and b > 200:
+            out.append('g')
         elif r > 200:
-            out += 'r'
+            out.append('r')
         else:
-            out += 'x'
-        out += '\t'
-    print(out)
-    if cv2.waitKey(1) == ord('q'):
-        break
+            out.append('x')
+        cv2.circle(frame, center=(x,y), radius=5, color=(255,0,0) if out[-1]=='r' else (0,255,0))
+    cv2.imshow('Camera', frame)
+    cv2.waitKey(1)
+    return out
 
-cam.release()
-cv2.destroyAllWindows()
+def close():
+    cam.release()
+    cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    try:
+        init()
+        #while True:
+        _, frame = cam.read()
+        cv2.imshow('Cam', frame)
+        cv2.waitKey(0)
+    finally:
+        close()

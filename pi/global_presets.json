@@ -88,5 +88,57 @@
                 "Color": {}
             }
         ]
+    },
+    "Main": {
+        "Name": "Main",
+        "Patterns": [
+            {
+                "Name": "Match",
+                "Control Code": -1,
+                "Numeric": {
+                    "Brightness": 150
+                },
+                "Color": {}
+            },
+            {
+                "Name": "Match",
+                "Control Code": -1,
+                "Numeric": {
+                    "Brightness": 150
+                },
+                "Color": {}
+            },
+            {
+                "Name": "Gradient",
+                "Control Code": 7,
+                "Numeric": {
+                    "Brightness": 254
+                },
+                "Color": {
+                    "Start Color": "#ffffff",
+                    "End Color": "#ffffff"
+                }
+            },
+            {
+                "Name": "Solid",
+                "Control Code": 1,
+                "Numeric": {
+                    "Brightness": 255
+                },
+                "Color": {
+                    "Color": "#ffffff"
+                }
+            },
+            {
+                "Name": "Rainbow",
+                "Control Code": 2,
+                "Numeric": {
+                    "Speed": 20,
+                    "Scale": 20,
+                    "Brightness": 255
+                },
+                "Color": {}
+            }
+        ]
     }
 }

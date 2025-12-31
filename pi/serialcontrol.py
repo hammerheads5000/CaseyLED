@@ -83,3 +83,6 @@ def read_buffer() -> list[str] | None:
         return [str(l) for l in lines[:-1]]
     
     return None
+
+def close():
+    _serial_port.close()

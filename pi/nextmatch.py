@@ -56,22 +56,28 @@ def get_tba_station():
     else:
         return None
     
-def get_nexus_matches() -> str | filter:
+def get_nexus_matches() -> str | list:
     response = requests.get(NEXUS_URL, headers={'Nexus-Api-Key': NEXUS_API_KEY})
     
     if not response.ok:
         return 'Nexus error '+response.text
     
     data = response.json()
-    
-    matches = filter(lambda m: TEAM_NUMBER in m.get('redTeams', []) + m.get('blueTeams', []), data['matches'])
+    matches = []
+    for i in range(len(data['matches'])-1):
+        if TEAM_NUMBER in data['matches'][i].get('redTeams', []) + data['matches'][i].get('blueTeams', []):
+            matches.append(data['matches'][i])
+            if matches[-1]['status'] == 'On field' and data['matches'][i+1]['status'] == 'On field':
+                matches[-1]['status'] = 'Complete'
+    if TEAM_NUMBER in data['matches'][-1].get('redTeams', []) + data['matches'][-1].get('blueTeams'):
+        matches.append(data['matches'][-1])
     return matches
 
 def get_nexus_next_match():
     matches = get_nexus_matches()
     if isinstance(matches, str):
         return matches
-    return next(filter(lambda m: not m['status'] == 'On field', matches), 'Nexus error: No next match!')
+    return next(filter(lambda m: not m['status'] == 'Complete', matches), 'Nexus error: No next match!')
 
 def get_nexus_station():
     next_match = get_nexus_next_match()
