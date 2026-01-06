@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import traceback
 import nextmatch
 from nicegui import events, ui, app, run
 import serialcontrol as ser
@@ -174,12 +175,12 @@ class GlobalPreset:
         return cls(global_preset['Name'], list(map(Pattern.fromdict, global_preset['Patterns'])))
 
 def save_config():
-    with open('config.json', 'w') as f:
+    with open('/home/hammerheads/CaseyLED/pi/config.json', 'w') as f:
         json.dump({'Strips': [strip.asdict() for strip in strips]}, f, cls=EnhancedJSONEncoder, indent=4)
 
 def init_strips():
     try:
-        with open('config.json') as f:
+        with open('/home/hammerheads/CaseyLED/pi/config.json') as f:
             configs = json.load(f)['Strips']
             for i in range(len(configs)):
                 strips.append(Strip.fromdict(configs[i]))
@@ -188,7 +189,7 @@ def init_strips():
         log_error('ERROR: failed to parse config.json')
             
 def update_config():
-    with open('config.json') as f:
+    with open('/home/hammerheads/CaseyLED/pi/config.json') as f:
         configs = json.load(f)['Strips']
         for i in range(min(len(strips), len(configs))):
             strips[i].configure(configs[i])
@@ -202,7 +203,7 @@ def update_config():
     root.refresh()
             
 async def save_presets():
-    with open('presets.json', 'w') as f:
+    with open('/home/hammerheads/CaseyLED/pi/presets.json', 'w') as f:
         json.dump({name: preset.asdict() for name, preset in presets.items()}, f, indent=4)
         
     for strip in strips:
@@ -211,7 +212,7 @@ async def save_presets():
 def load_presets():
     presets.clear()
     try:
-        with open('presets.json') as f:
+        with open('/home/hammerheads/CaseyLED/pi/presets.json') as f:
             presets_json: dict = json.load(f)
             for name, preset in presets_json.items():
                 presets[name] = StripPreset.fromdict(preset)
@@ -219,7 +220,7 @@ def load_presets():
         log_error('ERROR: failed to parse presets.json')
 
 def save_global_presets():
-    with open('global_presets.json', 'w') as f:
+    with open('/home/hammerheads/CaseyLED/pi/global_presets.json', 'w') as f:
         json.dump(global_presets, f, cls=EnhancedJSONEncoder, indent=4)
         
     global_preset_dropdown.refresh()
@@ -227,7 +228,7 @@ def save_global_presets():
 def load_global_presets():
     global_presets.clear()
     try:
-        with open('global_presets.json') as f:
+        with open('/home/hammerheads/CaseyLED/pi/global_presets.json') as f:
             global_presets_json: dict = json.load(f)
             for name, global_preset in global_presets_json.items():
                 global_presets[name] = GlobalPreset.fromdict(global_preset)
@@ -476,13 +477,13 @@ def delete_strip(strip: Strip):
 def update_queue_lights():
     color, station, status = '#FFFFFF', 1, 'Queuing soon'
     nexus = nextmatch.get_nexus_station()
-    tba = nextmatch.get_tba_station()
+    #tba = nextmatch.get_tba_station()
     if not isinstance(nexus, str):
         color, station, status = nexus
     else:
         log_warning(nexus)
-        if tba:
-            color, station = tba
+        # if tba:
+        #     color, station = tba
         
     if color == 'red':
         color = '#FF0000'
@@ -562,6 +563,16 @@ def update_serial_log():
 
 async def cam_init():
     await run.io_bound(cam.init)
+
+@app.on_page_exception
+def timeout_error_page(exception: Exception) -> None:
+    if not isinstance(exception, ser.serial.SerialTimeoutException):
+        raise exception
+    print('Timeout error!')
+    with ui.column().classes('absolute-center items-center gap-8'):
+        ui.icon('sym_o_timer', size='xl')
+        ui.label(f'{exception}').classes('text-2xl')
+        ui.code(traceback.format_exc(chain=False))
 
 def main():
     load_presets()

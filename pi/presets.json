@@ -20,5 +20,19 @@
             "Numeric": {},
             "Color": {}
         }
+    },
+    "JM": {
+        "Name": "JM",
+        "Pattern": {
+            "Name": "Gradient",
+            "Control Code": 7,
+            "Numeric": {
+                "Brightness": 121
+            },
+            "Color": {
+                "Start Color": "#006ce8",
+                "End Color": "#300b52"
+            }
+        }
     }
 }
