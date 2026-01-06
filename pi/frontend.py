@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 import traceback
 import nextmatch
 from nicegui import events, ui, app, run
+import batterytracking
 import serialcontrol as ser
 import json
 from typing import Callable
@@ -504,6 +505,15 @@ def update_battery_statuses():
         else:
             battery_statuses[i].props(add='color=green', remove='color=red')
 
+current_battery_notifications: set[str] = set()
+
+def update_battery_tracking():
+    notifications = batterytracking.get_notifications()
+    new_notifications = notifications - current_battery_notifications
+    current_battery_notifications.update(new_notifications)
+    for notification in new_notifications:
+        ui.notify(notification, close_button=True, timeout=0)
+
 def log(txt: str):
     print(txt)
     # _log.push(txt)
@@ -530,6 +540,8 @@ battery_statuses: list[ui.icon] = []
 @ui.refreshable
 def root():
     global _log
+    
+    ui.timer(10, update_battery_tracking)
     with ui.tabs() as tabs:
         led_tab = ui.tab('LEDs')
         log_tab = ui.tab('Log')
@@ -578,6 +590,7 @@ def main():
     load_presets()
     load_global_presets()
     init_strips()
+    batterytracking.init()
     root()
     app.timer(10, update_queue_lights)
     # app.timer(1, update_serial_log)
